@@ -1,0 +1,324 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Void Metal Studio – Frontend Visual Music Studio Implementation",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Implement full dark mythical visual theme with gargoyle dragon, cracked stone, and ember glow effects across all UI surfaces",
+      "acceptanceCriteria": [
+        "Background displays cracked black stone texture with glowing red-orange ember vein cracks",
+        "Large gargoyle dragon face visible in upper background with glowing red eyes",
+        "All text uses blood-red gothic typography",
+        "Cinematic shadow and glow effects applied throughout",
+        "Dragon scale texture patterns present on UI panels"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Define global CSS custom properties for blood-red accent color (#b91c1c or similar), gothic font stack (e.g., 'Cinzel', 'UnifrakturMaguntia', serif), dark stone backgrounds, and ember glow effects. Add CSS classes for cracked-stone panels, fire-vein overlays, and shadow/glow animations. Wire in the generated background tile image frontend/public/assets/generated/stone-bg-tile.dim_512x512.png as a repeating body background. Add CSS for dragon-scale texture patterns using pseudo-elements or border textures."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add the gargoyle dragon face background image frontend/public/assets/generated/gargoyle-dragon-face.dim_1920x1080.png as a fixed positioned element in the upper background area with high z-index layering. Ensure it's visible behind all other UI elements but above the body background. Apply cinematic dark lighting with CSS filters (brightness, contrast) and dramatic shadow overlays."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Build top toolbar with 5 forged-metal cracked-stone styled buttons (Upload Photo, Upload Video, Music Gen, Video Gen, Export) and a separate centered Effects button below",
+      "acceptanceCriteria": [
+        "Toolbar renders at top with exactly 5 buttons: Upload Photo, Upload Video, Music Gen, Video Gen, Export",
+        "Each toolbar button has cracked-stone forged-metal styling with blood-red label",
+        "Effects button appears below toolbar, horizontally centered, with dragon eye icon",
+        "All buttons are interactive and trigger their respective functions"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Toolbar.tsx",
+          "operation": "create",
+          "description": "Create a Toolbar component rendering 5 buttons in a horizontal flex layout: Upload Photo, Upload Video, Music Gen, Video Gen, Export. Use the generated toolbar button base texture frontend/public/assets/generated/toolbar-btn-base.dim_200x60.png as background for each button. Style with blood-red gothic text labels and add dragon-themed icons (use placeholder SVG or unicode symbols). Each button should trigger a callback prop passed from parent. Export button should be disabled when no content is present on canvas."
+        },
+        {
+          "path": "frontend/src/components/EffectsButton.tsx",
+          "operation": "create",
+          "description": "Create an EffectsButton component styled with forged-metal/cracked-stone aesthetic and the dragon eye emoji frontend/public/assets/generated/emoji-dragon-eye.dim_128x128.png as the icon. Position this button to render below the toolbar, horizontally centered. Wire onClick handler to open the effects menu (to be implemented in REQ-5)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Import and render the Toolbar component at the top of the app layout. Import and render the EffectsButton component below the toolbar, centered horizontally. Pass necessary callback handlers for each toolbar button action (to be wired to backend/upload logic in subsequent requirements)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Build central canvas area with drag-and-drop file upload and preview rendering for images, video, audio, and text files",
+      "acceptanceCriteria": [
+        "Canvas displays cracked stone with fire vein glow effect",
+        "Empty state shows 'Drop your creation here' in blood-red gothic text",
+        "Drag-and-drop from desktop onto canvas works for all supported file types",
+        "Image files show thumbnail preview immediately after drop/upload",
+        "Audio files render a waveform visualization",
+        "Video files show an embedded video player",
+        "Text files show a scrollable preview of content",
+        "Upload Photo and Upload Video toolbar buttons open native file picker and load files into canvas"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Canvas.tsx",
+          "operation": "create",
+          "description": "Create a Canvas component with a large cracked black stone styled div using the stone background tile. Implement drag-and-drop event handlers (onDragOver, onDrop) to accept files of types: jpg, png, gif, webp, mp4, webm, mp3, wav, txt. Store uploaded files in component state. Render empty state with blood-red gothic text 'Drop your creation here' when no files are loaded. After file drop/upload, render previews: img tag for images, HTML5 video element for video, audio waveform visualization (use canvas or a library like wavesurfer.js) for audio, and scrollable pre or textarea for text files. Add fire-vein glow overlay effect using CSS pseudo-elements or SVG filters."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Import and render the Canvas component in the central layout area. Pass refs or callback handlers to allow Toolbar buttons (Upload Photo, Upload Video) to trigger a hidden file input element that, when changed, loads files into the Canvas state. Ensure the Canvas component receives authentication status from useInternetIdentity to enforce login before upload (REQ-11)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Build bottom panel with IGNITE button, Dragon Power slider, and status display",
+      "acceptanceCriteria": [
+        "IGNITE button is prominently displayed with fire glow animation",
+        "Dragon Power slider renders with blood-red track and stone handle",
+        "Slider value range is 0–100, defaulting to 75",
+        "Status text displays 'AWAITING COMMAND' on load",
+        "Status text updates dynamically during operations"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/BottomPanel.tsx",
+          "operation": "create",
+          "description": "Create a BottomPanel component with three elements: (1) IGNITE button using the generated button artwork frontend/public/assets/generated/ignite-button.dim_400x120.png as background with a fire glow CSS animation (keyframes with box-shadow pulsing in red-orange); (2) Dragon Power slider (HTML range input styled with blood-red track and a custom stone-textured handle, default value 75, min 0, max 100); (3) Status text display initialized to 'AWAITING COMMAND', updating via a statusText prop. Style all elements with the dark stone/blood-red aesthetic. Export callbacks for IGNITE button click and slider value change."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Import and render the BottomPanel component at the bottom of the app layout. Maintain state for Dragon Power slider value (default 75) and status text (default 'AWAITING COMMAND'). Pass these state values and setters as props to BottomPanel. Wire the IGNITE button callback to trigger the generation flow (to be implemented in REQ-7)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Implement Effects button functionality with dragon-themed visual effects menu",
+      "acceptanceCriteria": [
+        "Clicking the Effects button opens an effects menu/panel",
+        "Menu contains at least 7 named dragon-themed effects",
+        "Selecting an effect applies a visual transformation to the canvas content",
+        "Effects can be toggled on/off",
+        "Menu closes after selection or on outside click"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/EffectsMenu.tsx",
+          "operation": "create",
+          "description": "Create an EffectsMenu component that renders a dropdown/modal overlay with a list of 7 dragon-themed effects: Fire Glow, Chain Overlay, Stone Crack, Dragon Breath, Ember Pulse, Shadow Veil, Blood Drip. Each effect is a selectable button styled with dark stone/blood-red aesthetic. On selection, apply a corresponding CSS filter or overlay class to the canvas content (e.g., Fire Glow adds a red-orange drop-shadow, Chain Overlay adds a repeating chain pattern, etc.). Maintain active effect state and allow toggling effects on/off. Close the menu after selection or when clicking outside. Use portal rendering or absolute positioning over the canvas."
+        },
+        {
+          "path": "frontend/src/components/EffectsButton.tsx",
+          "operation": "modify",
+          "description": "Wire the EffectsButton onClick handler to toggle the visibility of the EffectsMenu component. Pass a callback to EffectsMenu for applying effects to the canvas content."
+        },
+        {
+          "path": "frontend/src/components/Canvas.tsx",
+          "operation": "modify",
+          "description": "Add state to track the currently active effect. Apply the corresponding CSS class or inline style to the canvas content preview elements based on the active effect. Expose a callback prop to receive effect changes from EffectsMenu."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Implement Music Gen and Video Gen toolbar buttons with modal prompt and Red Hat shepherd-main endpoint integration",
+      "acceptanceCriteria": [
+        "Music Gen button opens a text seed input modal",
+        "Video Gen button opens a text seed input modal",
+        "On submit, POST request is sent to the shepherd-main endpoint with seed and power level",
+        "Console logs 'shepherd-main endpoint connected' on each call",
+        "Canvas shows 'GENERATING...' status during the request",
+        "Music result renders as audio waveform player in canvas",
+        "Video result renders as video player in canvas",
+        "Status updates to 'COMPLETE' or 'ERROR' after generation"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/GenerationModal.tsx",
+          "operation": "create",
+          "description": "Create a GenerationModal component that renders a dark dragon-themed modal overlay with a text input field for seed/description and Submit/Cancel buttons. Export a prop for the generation type (music or video) to customize the modal title. On submit, call a callback prop with the entered seed text. Style with cracked stone background and blood-red text."
+        },
+        {
+          "path": "frontend/src/hooks/useRedHatGeneration.ts",
+          "operation": "create",
+          "description": "Create a custom hook useRedHatGeneration that encapsulates the logic for calling the Red Hat shepherd-main endpoint. Accept parameters: generationType (music or video), seedText, and dragonPower. Use fetch to POST to the shepherd-main endpoint with the payload { seed: seedText, power: dragonPower, type: generationType }. Log 'shepherd-main endpoint connected' to console on each call. Return the result (audio or video URL/blob) and loading/error state. Handle errors gracefully and return error messages."
+        },
+        {
+          "path": "frontend/src/components/Toolbar.tsx",
+          "operation": "modify",
+          "description": "Wire the Music Gen button onClick to open the GenerationModal for music. Wire the Video Gen button onClick to open the GenerationModal for video. On modal submit, call the useRedHatGeneration hook with the seed text and current Dragon Power value. Update the app status to 'GENERATING...' during the request. On success, pass the result to the Canvas component to render as an audio waveform or video player. On error, update status to 'ERROR'."
+        },
+        {
+          "path": "frontend/src/components/Canvas.tsx",
+          "operation": "modify",
+          "description": "Add state to store generated media results (audio or video blobs/URLs). When a generation result is received, render it in the canvas: audio as an audio waveform player, video as a video player. Clear previous content or add to a list of uploaded/generated media."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Manage the visibility state of GenerationModal (music and video). Pass the current Dragon Power slider value to the generation callbacks. Update the status text to 'GENERATING...' when generation starts, 'COMPLETE' on success, and 'ERROR' on failure."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Implement IGNITE button to send uploaded content and seed text to Red Hat shepherd-main endpoint",
+      "acceptanceCriteria": [
+        "IGNITE sends uploaded content metadata and seed text to shepherd-main endpoint",
+        "Dragon Power value is included in the request payload",
+        "If no text seed is loaded, user is prompted for one before sending",
+        "Result is rendered in canvas matching content type",
+        "Console confirms shepherd-main connection on each IGNITE call"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/BottomPanel.tsx",
+          "operation": "modify",
+          "description": "Wire the IGNITE button onClick handler to trigger a callback passed from App.tsx. This callback will collect all uploaded canvas content (file metadata), prompt for seed text if no text file is loaded (using GenerationModal), and call the useRedHatGeneration hook with the combined payload and Dragon Power value. Update status to 'GENERATING...' during the request."
+        },
+        {
+          "path": "frontend/src/hooks/useRedHatGeneration.ts",
+          "operation": "modify",
+          "description": "Extend the useRedHatGeneration hook to support an IGNITE mode that accepts uploaded file metadata (file names, types, sizes) along with seed text and Dragon Power. POST this combined payload to the shepherd-main endpoint. Log 'shepherd-main endpoint connected' on each call. Return the generated result (image, audio, or video) based on the content type."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Implement the IGNITE callback: collect uploaded files from Canvas state, check if a text seed is present (from uploaded .txt file or prompt user with GenerationModal), combine with Dragon Power value, and call useRedHatGeneration in IGNITE mode. On success, pass the result to Canvas to render. Update status to 'COMPLETE' or 'ERROR' based on result."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Implement Export button to download canvas content with steganographic-style watermark in filename and metadata",
+      "acceptanceCriteria": [
+        "Export button triggers a file download of active canvas content",
+        "Downloaded filename encodes a user session identifier",
+        "Status area confirms 'EXPORT COMPLETE' after download",
+        "Export is disabled when canvas is empty"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Toolbar.tsx",
+          "operation": "modify",
+          "description": "Wire the Export button onClick to trigger an export callback passed from App.tsx. Disable the Export button when no content is present on the canvas (check canvas state for empty)."
+        },
+        {
+          "path": "frontend/src/hooks/useExport.ts",
+          "operation": "create",
+          "description": "Create a custom hook useExport that accepts the active canvas content (file blob or URL) and the user's principal ID (from useInternetIdentity). Generate a filename that encodes the principal ID as a steganographic-style watermark (e.g., append a hash or encoded string to the filename). Use the browser's download API (create an anchor element with download attribute, trigger click) to download the file. Return a function to trigger export and a success callback."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Implement the Export callback: retrieve the active canvas content (current image/audio/video blob or URL) and the authenticated user's principal ID from useInternetIdentity. Call the useExport hook to trigger the download with the watermarked filename. Update the status text to 'EXPORT COMPLETE' after successful download."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Implement frontend content protection: block right-click, disable save/copy/print shortcuts, and trigger ban overlay on violation detection",
+      "acceptanceCriteria": [
+        "Right-clicking on canvas or media previews is blocked",
+        "Ctrl+S, Ctrl+C, Ctrl+P keyboard shortcuts are intercepted and blocked on canvas",
+        "On violation detection, full-screen ban overlay renders immediately with exact ban message",
+        "Backend stores banned session/identity; banned users see only ban overlay on return",
+        "CSS user-select: none applied to all canvas content"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Canvas.tsx",
+          "operation": "modify",
+          "description": "Add event listeners to the canvas container div: (1) onContextMenu handler that prevents default (blocks right-click); (2) onKeyDown handler that intercepts and prevents Ctrl+S, Ctrl+C, Ctrl+P shortcuts. On any violation attempt, call a callback prop to trigger the ban flow. Apply CSS user-select: none and pointer-events: none to all canvas content preview elements (images, video, audio)."
+        },
+        {
+          "path": "frontend/src/components/BanOverlay.tsx",
+          "operation": "create",
+          "description": "Create a BanOverlay component that renders a full-screen fixed positioned overlay with the exact ban message: 'The Dragon caught you stealing. Account permanently removed. Created by Skulls for the people who wanna stay real.' Style with dark dragon aesthetic, blood-red text, and high z-index to cover all other UI. The overlay should be the only visible element when a user is banned."
+        },
+        {
+          "path": "frontend/src/hooks/useBanUser.ts",
+          "operation": "create",
+          "description": "Create a custom hook useBanUser that calls the backend banUser() function (from backend interface) when a violation is detected. On success, update local state to show the BanOverlay. Include error handling if the backend call fails."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "On app load (after authentication), call the backend isBanned() query to check if the current user is banned. If banned, render only the BanOverlay component and hide all other UI. Pass a callback to Canvas that triggers useBanUser when a content protection violation is detected."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Implement Internet Identity authentication and require login before upload/generation features",
+      "acceptanceCriteria": [
+        "Unauthenticated users see a login prompt before accessing upload/generation features",
+        "Login uses Internet Identity via useInternetIdentity hook",
+        "After login, user principal is displayed in the UI",
+        "Upload and generation actions are disabled until authenticated",
+        "Ban check runs immediately after authentication"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/LoginPrompt.tsx",
+          "operation": "create",
+          "description": "Create a LoginPrompt component that renders a dark dragon-themed login screen when the user is unauthenticated. Use the authorization component's login pattern: display a Login button that calls useInternetIdentity().login(). After login, display the user's short principal ID in a header or corner of the UI. Style with cracked stone background, blood-red text, and gargoyle dragon imagery."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Use the useInternetIdentity hook to check authentication status. If unauthenticated, render only the LoginPrompt component. After login, check the user's ban status by calling backend isBanned(). If banned, render BanOverlay. If not banned and no user profile exists, prompt the user to set their name using a profile setup modal (per authorization component usage instructions). Disable all upload and generation actions (Toolbar buttons, Canvas drag-and-drop, IGNITE button) until the user is authenticated. Display the user's principal or profile name in the UI header after login."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetup.tsx",
+          "operation": "create",
+          "description": "Create a ProfileSetup component that renders a modal prompting the user for their name on first login (when getCallerUserProfile returns null). Use a dark dragon-themed modal with a text input for the name and a Submit button. On submit, call backend saveCallerUserProfile({ name: enteredName }) and close the modal. Follow the authorization component's usage instructions for preventing profile setup modal flash by checking actorFetching and isFetched states before showing the modal."
+        },
+        {
+          "path": "frontend/src/hooks/useUserProfile.ts",
+          "operation": "create",
+          "description": "Create a custom hook useUserProfile that wraps the backend getCallerUserProfile() and saveCallerUserProfile() calls using React Query. Follow the authorization component's usage pattern to prevent modal flash: return isLoading that accounts for actorFetching, and isFetched that ensures actor is available. Use queryKey ['currentUserProfile'] and invalidate the query after saving a profile."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Build custom emoji picker with 15 ForeverRaw Gargoyle Dragon emojis insertable into text inputs",
+      "acceptanceCriteria": [
+        "Emoji picker button is accessible from the UI",
+        "Picker displays all 15 named ForeverRaw emojis as image assets",
+        "Each emoji has a stone/metal dragon-scale visual style with red-orange glow",
+        "Clicking an emoji inserts it into the active text/seed input field",
+        "Picker closes after selection or on outside click"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/EmojiPicker.tsx",
+          "operation": "create",
+          "description": "Create an EmojiPicker component that renders a dropdown/modal overlay displaying all 15 ForeverRaw Gargoyle Dragon emoji images from frontend/public/assets/generated/: emoji-dragon-eye.dim_128x128.png, emoji-ember.dim_128x128.png, emoji-chain-link.dim_128x128.png, emoji-skull.dim_128x128.png, emoji-raw-heart.dim_128x128.png, emoji-lightning-strike.dim_128x128.png, emoji-stone.dim_128x128.png, emoji-blade.dim_128x128.png, emoji-void.dim_128x128.png, emoji-dragon-shield.dim_128x128.png, emoji-raw-rage.dim_128x128.png, emoji-burning-heart.dim_128x128.png, emoji-prayer.dim_128x128.png, emoji-watching.dim_128x128.png, emoji-steel.dim_128x128.png. Each emoji is a clickable button. On click, insert the emoji (as an img tag or unicode character) into the currently focused text input field (seed prompt, text file content, etc.) via a callback prop. Close the picker after selection or on outside click. Style with dark stone/blood-red aesthetic."
+        },
+        {
+          "path": "frontend/src/components/EmojiPickerButton.tsx",
+          "operation": "create",
+          "description": "Create an EmojiPickerButton component styled with a dragon icon (use emoji-dragon-eye.dim_128x128.png or similar) that toggles the visibility of the EmojiPicker component. Position the button near text input fields (GenerationModal, profile setup, etc.) or in a fixed corner of the UI for global access."
+        },
+        {
+          "path": "frontend/src/components/GenerationModal.tsx",
+          "operation": "modify",
+          "description": "Add the EmojiPickerButton to the GenerationModal next to the seed text input field. Wire the emoji insertion callback to insert the selected emoji into the text input. Maintain focus on the input after emoji insertion."
+        }
+      ]
+    }
+  ]
+}

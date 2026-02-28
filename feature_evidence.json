@@ -1,0 +1,232 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-create-the-full-dark-mythical-visual-theme-cracked-black-stone-background-with-glowing-ember-red-orange-vein-cracks-dragon-scale-texture-patterns-cinematic-dark-lighting-with-dramatic-shadows-and-a-massive-gargoyle-dragon-face-rendered-prominently-in-the-upper-background-area-with-glowing-red-eyes-staring-forward-apply-this-theme-consistently-across-all-ui-surfaces-use-blood-red-as-the-primary-accent-color-for-text-borders-and-interactive-elements-typography-must-be-heavy-gothic-style",
+      "featureTitle": "Create the full dark mythical visual theme: cracked black stone background with glowing ember red-orange vein cracks, dragon scale texture patterns, cinematic dark lighting with dramatic shadows, and a massive Gargoyle Dragon face rendered prominently in the upper background area with glowing red eyes staring forward. Apply this theme consistently across all UI surfaces. Use blood-red as the primary accent color for text, borders, and interactive elements. Typography must be heavy gothic style.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-a-top-toolbar-with-exactly-5-heavy-forged-metal-cracked-stone-styled-buttons-with-blood-red-dragon-icons-and-labels-upload-photo-upload-video-music-gen-video-gen-export-below-the-toolbar-centered-add-a-separate-effects-button-with-a-dragon-eye-icon-all-buttons-must-have-a-forged-metal-cracked-stone-visual-style-with-blood-red-labels",
+      "featureTitle": "Build a top toolbar with exactly 5 heavy forged-metal cracked-stone styled buttons with blood-red dragon icons and labels: 'Upload Photo', 'Upload Video', 'Music Gen', 'Video Gen', 'Export'. Below the toolbar, centered, add a separate 'Effects' button with a dragon eye icon. All buttons must have a forged-metal / cracked-stone visual style with blood-red labels.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Toolbar.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-central-canvas-area-a-large-cracked-black-stone-panel-with-glowing-fire-vein-overlay-display-bold-blood-red-gothic-text-drop-your-creation-here-when-empty-support-drag-and-drop-file-upload-directly-onto-the-canvas-for-all-file-types-images-jpg-png-gif-webp-video-mp4-webm-text-lyrics-txt-audio-mp3-wav-after-upload-immediately-render-a-preview-image-thumbnail-for-photos-html5-video-player-for-video-audio-waveform-visualization-for-audio-files-and-scrollable-text-preview-for-txt-files-multiple-files-can-be-loaded",
+      "featureTitle": "Build the central canvas area: a large cracked black stone panel with glowing fire vein overlay. Display bold blood-red gothic text 'Drop your creation here' when empty. Support drag-and-drop file upload directly onto the canvas for all file types: images (jpg/png/gif/webp), video (mp4/webm), text/lyrics (.txt), audio (mp3/wav). After upload, immediately render a preview: image thumbnail for photos, HTML5 video player for video, audio waveform visualization for audio files, and scrollable text preview for .txt files. Multiple files can be loaded.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Canvas.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-bottom-panel-with-three-elements-1-a-large-burning-stone-styled-ignite-button-with-fire-glow-animation-2-a-dragon-power-slider-labeled-with-that-name-controlling-generation-intensity-value-0-100-default-75-3-a-status-display-showing-awaiting-command-by-default-updating-to-reflect-current-action-state-e-g-generating-complete-error-all-elements-must-match-the-dark-stone-blood-red-aesthetic",
+      "featureTitle": "Build the bottom panel with three elements: (1) A large burning stone styled 'IGNITE' button with fire glow animation; (2) A 'Dragon Power' slider labeled with that name, controlling generation intensity (value 0–100, default 75); (3) A status display showing 'AWAITING COMMAND' by default, updating to reflect current action state (e.g., 'GENERATING...', 'COMPLETE', 'ERROR'). All elements must match the dark stone / blood-red aesthetic.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/BottomPanel.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-the-effects-button-functionality-clicking-it-opens-a-dropdown-modal-overlay-with-a-menu-of-dragon-themed-visual-effects-that-can-be-applied-to-content-on-the-canvas-include-at-minimum-these-effects-fire-glow-chain-overlay-stone-crack-dragon-breath-ember-pulse-shadow-veil-blood-drip-each-effect-is-selectable-and-applies-a-css-filter-overlay-to-the-active-canvas-content-preview",
+      "featureTitle": "Implement the Effects button functionality: clicking it opens a dropdown/modal overlay with a menu of dragon-themed visual effects that can be applied to content on the canvas. Include at minimum these effects: Fire Glow, Chain Overlay, Stone Crack, Dragon Breath, Ember Pulse, Shadow Veil, Blood Drip. Each effect is selectable and applies a CSS filter/overlay to the active canvas content preview.",
+      "files": [
+        "frontend/src/components/Canvas.tsx",
+        "frontend/src/components/EffectsMenu.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-the-music-gen-and-video-gen-toolbar-buttons-each-opens-a-modal-prompt-asking-the-user-for-a-text-seed-description-on-submission-send-the-seed-text-and-dragon-power-slider-value-to-the-red-hat-shepherd-main-backend-endpoint-as-a-post-request-display-a-loading-state-on-the-canvas-generating-status-on-response-render-the-result-in-the-canvas-audio-waveform-player-for-music-video-player-for-video-log-the-endpoint-connection-confirmation-to-the-browser-console-on-each-call",
+      "featureTitle": "Implement the Music Gen and Video Gen toolbar buttons: each opens a modal prompt asking the user for a text seed/description. On submission, send the seed text and Dragon Power slider value to the Red Hat shepherd-main backend endpoint as a POST request. Display a loading state on the canvas ('GENERATING...' status). On response, render the result in the canvas: audio waveform player for music, video player for video. Log the endpoint connection confirmation to the browser console on each call.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Canvas.tsx",
+        "frontend/src/components/GenerationModal.tsx",
+        "frontend/src/components/Toolbar.tsx",
+        "frontend/src/hooks/useRedHatGeneration.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-the-ignite-button-on-click-collect-all-uploaded-canvas-content-files-plus-a-seed-text-prompt-prompt-user-if-no-text-file-is-loaded-combine-with-dragon-power-slider-value-and-send-as-a-post-request-to-the-red-hat-shepherd-main-endpoint-for-ai-generation-image-music-or-video-depending-on-content-type-display-the-returned-result-in-the-canvas-log-connection-confirmation-to-console",
+      "featureTitle": "Implement the IGNITE button: on click, collect all uploaded canvas content (files) plus a seed text prompt (prompt user if no text file is loaded), combine with Dragon Power slider value, and send as a POST request to the Red Hat shepherd-main endpoint for AI generation (image, music, or video depending on content type). Display the returned result in the canvas. Log connection confirmation to console.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/BottomPanel.tsx",
+        "frontend/src/hooks/useRedHatGeneration.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-the-export-button-triggers-a-download-of-the-current-canvas-content-active-image-audio-video-with-an-invisible-user-specific-steganographic-style-text-watermark-embedded-in-the-filename-and-metadata-the-watermark-must-encode-the-user-s-identity-session-id-display-an-export-confirmation-in-the-status-area",
+      "featureTitle": "Implement the Export button: triggers a download of the current canvas content (active image/audio/video) with an invisible user-specific steganographic-style text watermark embedded in the filename and metadata. The watermark must encode the user's identity session ID. Display an export confirmation in the status area.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Toolbar.tsx",
+        "frontend/src/hooks/useExport.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-hardcore-content-protection-on-all-canvas-content-1-disable-right-click-context-menu-over-the-canvas-and-any-media-previews-2-block-keyboard-shortcuts-for-save-ctrl-s-copy-ctrl-c-and-print-ctrl-p-3-apply-css-user-select-none-and-pointer-events-blocking-where-applicable-4-on-any-detected-violation-attempt-display-a-full-screen-ban-overlay-with-the-exact-message-the-dragon-caught-you-stealing-account-permanently-removed-created-by-skulls-for-the-people-who-wanna-stay-real-mark-the-user-s-session-as-permanently-banned-in-the-backend-once-banned-all-subsequent-page-loads-show-only-the-ban-overlay-note-browser-level-screenshot-prevention-is-not-technically-enforceable-protection-is-best-effort-via-js-event-blocking",
+      "featureTitle": "Implement hardcore content protection on all canvas content: (1) Disable right-click context menu over the canvas and any media previews; (2) Block keyboard shortcuts for save (Ctrl+S), copy (Ctrl+C), and print (Ctrl+P); (3) Apply CSS user-select: none and pointer-events blocking where applicable; (4) On any detected violation attempt, display a full-screen ban overlay with the exact message: 'The Dragon caught you stealing. Account permanently removed. Created by Skulls for the people who wanna stay real.' Mark the user's session as permanently banned in the backend. Once banned, all subsequent page loads show only the ban overlay. Note: browser-level screenshot prevention is not technically enforceable; protection is best-effort via JS event blocking.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/BanOverlay.tsx",
+        "frontend/src/components/Canvas.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-internet-identity-authentication-require-users-to-log-in-via-internet-identity-before-they-can-upload-files-or-trigger-generation-show-a-login-prompt-with-the-dark-dragon-aesthetic-if-unauthenticated-after-login-display-the-user-s-short-principal-id-in-the-ui-use-the-existing-useinternetidentity-hook",
+      "featureTitle": "Implement Internet Identity authentication: require users to log in via Internet Identity before they can upload files or trigger generation. Show a login prompt with the dark dragon aesthetic if unauthenticated. After login, display the user's short principal ID in the UI. Use the existing useInternetIdentity hook.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/LoginPrompt.tsx",
+        "frontend/src/components/ProfileSetup.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-a-custom-emoji-picker-panel-with-exactly-15-foreverraw-gargoyle-dragon-emojis-each-emoji-must-be-a-rendered-image-asset-with-heavy-textured-stone-metal-dragon-scale-style-and-red-orange-glow-the-15-emojis-are-dragon-eye-ember-chain-link-skull-raw-heart-lightning-strike-stone-blade-void-dragon-shield-raw-rage-burning-heart-prayer-watching-steel-the-emoji-picker-should-be-accessible-from-a-dragon-icon-button-and-allow-inserting-emojis-into-any-active-text-input-or-seed-prompt-field",
+      "featureTitle": "Build a custom emoji picker panel with exactly 15 ForeverRaw Gargoyle Dragon emojis. Each emoji must be a rendered image asset with heavy textured stone/metal/dragon-scale style and red-orange glow. The 15 emojis are: Dragon Eye, Ember, Chain Link, Skull, Raw Heart, Lightning Strike, Stone, Blade, Void, Dragon Shield, Raw Rage, Burning Heart, Prayer, Watching, Steel. The emoji picker should be accessible from a dragon-icon button and allow inserting emojis into any active text input or seed prompt field.",
+      "files": [
+        "frontend/src/components/EmojiPicker.tsx",
+        "frontend/src/components/GenerationModal.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-12"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

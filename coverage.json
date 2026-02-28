@@ -1,0 +1,312 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-27T15:30:08.001Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 12,
+    "implemented": 11,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Create the full dark mythical visual theme: cracked black stone background with glowing ember red-orange vein cracks, dragon scale texture patterns, cinematic dark lighting with dramatic shadows, and a massive Gargoyle Dragon face rendered prominently in the upper background area with glowing red eyes staring forward. Apply this theme consistently across all UI surfaces. Use blood-red as the primary accent color for text, borders, and interactive elements. Typography must be heavy gothic style.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-10",
+        "summary": "Store ban records in the Motoko backend: a stable data store mapping user principal (Internet Identity) to ban status (boolean) and ban timestamp. Expose query functions to check ban status and update functions to set ban. On app load, check ban status for the authenticated user and show ban overlay if banned.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-11",
+        "summary": "Implement Internet Identity authentication: require users to log in via Internet Identity before they can upload files or trigger generation. Show a login prompt with the dark dragon aesthetic if unauthenticated. After login, display the user's short principal ID in the UI. Use the existing useInternetIdentity hook.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/LoginPrompt.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/ProfileSetup.tsx",
+          "frontend/src/hooks/useUserProfile.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/LoginPrompt.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/ProfileSetup.tsx"
+        ]
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Build a custom emoji picker panel with exactly 15 ForeverRaw Gargoyle Dragon emojis. Each emoji must be a rendered image asset with heavy textured stone/metal/dragon-scale style and red-orange glow. The 15 emojis are: Dragon Eye, Ember, Chain Link, Skull, Raw Heart, Lightning Strike, Stone, Blade, Void, Dragon Shield, Raw Rage, Burning Heart, Prayer, Watching, Steel. The emoji picker should be accessible from a dragon-icon button and allow inserting emojis into any active text input or seed prompt field.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/EmojiPicker.tsx",
+          "frontend/src/components/EmojiPickerButton.tsx",
+          "frontend/src/components/GenerationModal.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/EmojiPicker.tsx",
+          "frontend/src/components/GenerationModal.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Build a top toolbar with exactly 5 heavy forged-metal cracked-stone styled buttons with blood-red dragon icons and labels: 'Upload Photo', 'Upload Video', 'Music Gen', 'Video Gen', 'Export'. Below the toolbar, centered, add a separate 'Effects' button with a dragon eye icon. All buttons must have a forged-metal / cracked-stone visual style with blood-red labels.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Toolbar.tsx",
+          "frontend/src/components/EffectsButton.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Toolbar.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Build the central canvas area: a large cracked black stone panel with glowing fire vein overlay. Display bold blood-red gothic text 'Drop your creation here' when empty. Support drag-and-drop file upload directly onto the canvas for all file types: images (jpg/png/gif/webp), video (mp4/webm), text/lyrics (.txt), audio (mp3/wav). After upload, immediately render a preview: image thumbnail for photos, HTML5 video player for video, audio waveform visualization for audio files, and scrollable text preview for .txt files. Multiple files can be loaded.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Canvas.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Canvas.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Build the bottom panel with three elements: (1) A large burning stone styled 'IGNITE' button with fire glow animation; (2) A 'Dragon Power' slider labeled with that name, controlling generation intensity (value 0–100, default 75); (3) A status display showing 'AWAITING COMMAND' by default, updating to reflect current action state (e.g., 'GENERATING...', 'COMPLETE', 'ERROR'). All elements must match the dark stone / blood-red aesthetic.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/BottomPanel.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/BottomPanel.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Implement the Effects button functionality: clicking it opens a dropdown/modal overlay with a menu of dragon-themed visual effects that can be applied to content on the canvas. Include at minimum these effects: Fire Glow, Chain Overlay, Stone Crack, Dragon Breath, Ember Pulse, Shadow Veil, Blood Drip. Each effect is selectable and applies a CSS filter/overlay to the active canvas content preview.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/EffectsMenu.tsx",
+          "frontend/src/components/EffectsButton.tsx",
+          "frontend/src/components/Canvas.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/EffectsMenu.tsx",
+          "frontend/src/components/Canvas.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Implement the Music Gen and Video Gen toolbar buttons: each opens a modal prompt asking the user for a text seed/description. On submission, send the seed text and Dragon Power slider value to the Red Hat shepherd-main backend endpoint as a POST request. Display a loading state on the canvas ('GENERATING...' status). On response, render the result in the canvas: audio waveform player for music, video player for video. Log the endpoint connection confirmation to the browser console on each call.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/GenerationModal.tsx",
+          "frontend/src/hooks/useRedHatGeneration.ts",
+          "frontend/src/components/Toolbar.tsx",
+          "frontend/src/components/Canvas.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/GenerationModal.tsx",
+          "frontend/src/hooks/useRedHatGeneration.ts",
+          "frontend/src/components/Toolbar.tsx",
+          "frontend/src/components/Canvas.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-7",
+        "summary": "Implement the IGNITE button: on click, collect all uploaded canvas content (files) plus a seed text prompt (prompt user if no text file is loaded), combine with Dragon Power slider value, and send as a POST request to the Red Hat shepherd-main endpoint for AI generation (image, music, or video depending on content type). Display the returned result in the canvas. Log connection confirmation to console.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/BottomPanel.tsx",
+          "frontend/src/hooks/useRedHatGeneration.ts",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/BottomPanel.tsx",
+          "frontend/src/hooks/useRedHatGeneration.ts",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Implement the Export button: triggers a download of the current canvas content (active image/audio/video) with an invisible user-specific steganographic-style text watermark embedded in the filename and metadata. The watermark must encode the user's identity session ID. Display an export confirmation in the status area.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Toolbar.tsx",
+          "frontend/src/hooks/useExport.ts",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Toolbar.tsx",
+          "frontend/src/hooks/useExport.ts",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-9",
+        "summary": "Implement hardcore content protection on all canvas content: (1) Disable right-click context menu over the canvas and any media previews; (2) Block keyboard shortcuts for save (Ctrl+S), copy (Ctrl+C), and print (Ctrl+P); (3) Apply CSS user-select: none and pointer-events blocking where applicable; (4) On any detected violation attempt, display a full-screen ban overlay with the exact message: 'The Dragon caught you stealing. Account permanently removed. Created by Skulls for the people who wanna stay real.' Mark the user's session as permanently banned in the backend. Once banned, all subsequent page loads show only the ban overlay. Note: browser-level screenshot prevention is not technically enforceable; protection is best-effort via JS event blocking.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Canvas.tsx",
+          "frontend/src/components/BanOverlay.tsx",
+          "frontend/src/hooks/useBanUser.ts",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Canvas.tsx",
+          "frontend/src/components/BanOverlay.tsx",
+          "frontend/src/App.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/authorization/MixinAuthorization.mo",
+    "backend/authorization/access-control.mo",
+    "backend/main.mo",
+    "build-request.json",
+    "build-template/Dockerfile",
+    "build-template/LICENSE",
+    "build-template/README.md",
+    "build-template/deploy.sh",
+    "build-template/icp.yaml",
+    "build-template/package.json",
+    "build-template/pnpm-lock.yaml",
+    "build-template/pnpm-workspace.yaml",
+    "build-template/scripts/prune-unused-images.js",
+    "build-template/scripts/resize-images.js",
+    "build-template/src/backend/canister.yaml",
+    "build-template/src/backend/system-idl/aaaaa-aa.did",
+    "build-template/src/frontend/canister.yaml",
+    "build-template/src/frontend/components.json",
+    "build-template/src/frontend/env.json",
+    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
+    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
+    "build-template/src/frontend/eslint.config.js",
+    "build-template/src/frontend/package.json",
+    "build-template/src/frontend/postcss.config.js",
+    "build-template/src/frontend/src/components/ui/accordion.tsx",
+    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
+    "build-template/src/frontend/src/components/ui/alert.tsx",
+    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
+    "build-template/src/frontend/src/components/ui/avatar.tsx",
+    "build-template/src/frontend/src/components/ui/badge.tsx",
+    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
+    "build-template/src/frontend/src/components/ui/button.tsx",
+    "build-template/src/frontend/src/components/ui/calendar.tsx",
+    "build-template/src/frontend/src/components/ui/card.tsx",
+    "build-template/src/frontend/src/components/ui/carousel.tsx",
+    "build-template/src/frontend/src/components/ui/chart.tsx",
+    "build-template/src/frontend/src/components/ui/checkbox.tsx",
+    "build-template/src/frontend/src/components/ui/collapsible.tsx",
+    "build-template/src/frontend/src/components/ui/command.tsx",
+    "build-template/src/frontend/src/components/ui/context-menu.tsx",
+    "build-template/src/frontend/src/components/ui/dialog.tsx",
+    "build-template/src/frontend/src/components/ui/drawer.tsx",
+    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
+    "build-template/src/frontend/src/components/ui/form.tsx",
+    "build-template/src/frontend/src/components/ui/hover-card.tsx",
+    "build-template/src/frontend/src/components/ui/input-otp.tsx",
+    "build-template/src/frontend/src/components/ui/input.tsx",
+    "build-template/src/frontend/src/components/ui/label.tsx",
+    "build-template/src/frontend/src/components/ui/menubar.tsx",
+    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
+    "build-template/src/frontend/src/components/ui/pagination.tsx",
+    "build-template/src/frontend/src/components/ui/popover.tsx",
+    "build-template/src/frontend/src/components/ui/progress.tsx",
+    "build-template/src/frontend/src/components/ui/radio-group.tsx",
+    "build-template/src/frontend/src/components/ui/resizable.tsx",
+    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
+    "build-template/src/frontend/src/components/ui/select.tsx",
+    "build-template/src/frontend/src/components/ui/separator.tsx",
+    "build-template/src/frontend/src/components/ui/sheet.tsx",
+    "build-template/src/frontend/src/components/ui/sidebar.tsx",
+    "build-template/src/frontend/src/components/ui/skeleton.tsx",
+    "build-template/src/frontend/src/components/ui/slider.tsx",
+    "build-template/src/frontend/src/components/ui/sonner.tsx",
+    "build-template/src/frontend/src/components/ui/switch.tsx",
+    "build-template/src/frontend/src/components/ui/table.tsx",
+    "build-template/src/frontend/src/components/ui/tabs.tsx",
+    "build-template/src/frontend/src/components/ui/textarea.tsx",
+    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
+    "build-template/src/frontend/src/components/ui/toggle.tsx",
+    "build-template/src/frontend/src/components/ui/tooltip.tsx",
+    "build-template/src/frontend/src/hooks/use-mobile.tsx",
+    "build-template/src/frontend/src/lib/utils.ts",
+    "build-template/src/frontend/tsconfig.json",
+    "build-template/src/frontend/vite.config.js",
+    "build-template/tsconfig.json",
+    "caffeine.lock.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/public/assets/generated/emoji-blade.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-burning-heart.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-chain-link.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-dragon-eye.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-dragon-shield.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-ember.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-lightning-strike.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-prayer.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-raw-heart.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-raw-rage.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-skull.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-stone.dim_128x128.png",
+    "frontend/public/assets/generated/emoji-void.dim_128x128.png",
+    "frontend/public/assets/generated/gargoyle-dragon-face.dim_1920x1080.png",
+    "frontend/public/assets/generated/stone-bg-tile.dim_512x512.png",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/BanOverlay.tsx",
+    "frontend/src/components/BottomPanel.tsx",
+    "frontend/src/components/Canvas.tsx",
+    "frontend/src/components/EffectsMenu.tsx",
+    "frontend/src/components/EmojiPicker.tsx",
+    "frontend/src/components/GenerationModal.tsx",
+    "frontend/src/components/LoginPrompt.tsx",
+    "frontend/src/components/ProfileSetup.tsx",
+    "frontend/src/components/Toolbar.tsx",
+    "frontend/src/config.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useExport.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useRedHatGeneration.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/ui-summary.json",
+    "frontend/src/utils/StorageClient.ts",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Void Metal Studio – a full prompt-based visual music studio with dark mythical dragon/gargoyle aesthetic (cracked black stone, glowing ember red-orange), ForeverRaw brand identity. Includes toolbar with Upload Photo/Video, Music Gen, Video Gen, Export buttons; drag-and-drop canvas; Effects menu; IGNITE generation button; Dragon Power slider; 15 custom ForeverRaw Gargoyle Dragon emojis; Red Hat shepherd-main backend integration for AI generation; hardcore content protection with permanent ban system; and internet identity verification.",
+  "architectural_notes": [
+    "Red Hat shepherd-main endpoint used for all AI generation (music, video, image) via IGNITE and gen buttons",
+    "Content protection relies on JS event blocking (contextmenu, keydown, drag) – note: screenshot blocking is not fully enforceable in browser",
+    "Invisible watermark must be user-specific and embedded on export and canvas display"
+  ],
+  "known_issues": [
+    "Browser-level screenshot prevention is not technically enforceable; protection is best-effort via JS event blocking"
+  ],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Massive Gargoyle Dragon face with glowing red eyes, cracked black stone skin, ember red-orange highlights, cinematic dark fantasy lighting, forward-facing stare, highly detailed (gargoyle-dragon-face.dim_1920x1080.png)\n- Cracked black stone texture tile with glowing ember red-orange vein cracks for background (stone-bg-tile.dim_512x512.png)\n- Dragon Eye custom emoji – glowing red eye with cracked stone surround, red-orange glow, stone/metal texture (emoji-dragon-eye.dim_128x128.png)\n- Ember custom emoji – small flame with dragon scale base, red-orange glow (emoji-ember.dim_128x128.png)\n- Chain Link custom emoji – heavy rusted iron chain link, dark metal texture (emoji-chain-link.dim_128x128.png)\n- Skull custom emoji – cracked stone skull with cross etched in eye socket, ember glow (emoji-skull.dim_128x128.png)\n- Raw Heart custom emoji – black stone heart with red glowing cracks (emoji-raw-heart.dim_128x128.png)\n- Lightning Strike custom emoji – dragon claw gripping a lightning bolt, red-orange glow (emoji-lightning-strike.dim_128x128.png)\n- Stone custom emoji – cracked black stone chunk with ember glow vein (emoji-stone.dim_128x128.png)\n- Blade custom emoji – dragon fang dagger dripping blood, dark metal finish (emoji-blade.dim_128x128.png)\n- Void custom emoji – deep black circle with shadowed dragon silhouette and faint red-orange rim (emoji-void.dim_128x128.png)\n- Dragon Shield custom emoji – gargoyle wing shaped as a shield, stone texture with red-orange glow (emoji-dragon-shield.dim_128x128.png)\n- Raw Rage custom emoji – dragon snout breathing fire, red-orange flames, stone scales (emoji-raw-rage.dim_128x128.png)\n- Burning Heart custom emoji – heart engulfed in fire with heavy chains wrapped around it (emoji-burning-heart.dim_128x128.png)\n- Prayer custom emoji – dragon claw holding a gothic cross, ember glow (emoji-prayer.dim_128x128.png)\n- Watching custom emoji – pair of glowing dragon eyes in darkness (emoji-watching.dim_128x128.png)\n- Steel custom emoji – dragon claw clenched fist, dark steel texture with red-orange glow (emoji-steel.dim_128x128.png)\n- IGNITE button artwork – burning stone slab with the word IGNITE carved in gothic blood-red letters, fire glow around edges (ignite-button.dim_400x120.png)\n- Forged metal cracked stone toolbar button base texture for 5 toolbar buttons (toolbar-btn-base.dim_200x60.png)",
+  "existing_features": [
+    {
+      "id": "feature-create-the-full-dark-mythical-visual-theme-cracked-black-stone-background-with-glowing-ember-red-orange-vein-cracks-dragon-scale-texture-patterns-cinematic-dark-lighting-with-dramatic-shadows-and-a-massive-gargoyle-dragon-face-rendered-prominently-in-the-upper-background-area-with-glowing-red-eyes-staring-forward-apply-this-theme-consistently-across-all-ui-surfaces-use-blood-red-as-the-primary-accent-color-for-text-borders-and-interactive-elements-typography-must-be-heavy-gothic-style",
+      "title": "Create the full dark mythical visual theme: cracked black stone background with glowing ember red-orange vein cracks, dragon scale texture patterns, cinematic dark lighting with dramatic shadows, and a massive Gargoyle Dragon face rendered prominently in the upper background area with glowing red eyes staring forward. Apply this theme consistently across all UI surfaces. Use blood-red as the primary accent color for text, borders, and interactive elements. Typography must be heavy gothic style.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-top-toolbar-with-exactly-5-heavy-forged-metal-cracked-stone-styled-buttons-with-blood-red-dragon-icons-and-labels-upload-photo-upload-video-music-gen-video-gen-export-below-the-toolbar-centered-add-a-separate-effects-button-with-a-dragon-eye-icon-all-buttons-must-have-a-forged-metal-cracked-stone-visual-style-with-blood-red-labels",
+      "title": "Build a top toolbar with exactly 5 heavy forged-metal cracked-stone styled buttons with blood-red dragon icons and labels: 'Upload Photo', 'Upload Video', 'Music Gen', 'Video Gen', 'Export'. Below the toolbar, centered, add a separate 'Effects' button with a dragon eye icon. All buttons must have a forged-metal / cracked-stone visual style with blood-red labels.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-central-canvas-area-a-large-cracked-black-stone-panel-with-glowing-fire-vein-overlay-display-bold-blood-red-gothic-text-drop-your-creation-here-when-empty-support-drag-and-drop-file-upload-directly-onto-the-canvas-for-all-file-types-images-jpg-png-gif-webp-video-mp4-webm-text-lyrics-txt-audio-mp3-wav-after-upload-immediately-render-a-preview-image-thumbnail-for-photos-html5-video-player-for-video-audio-waveform-visualization-for-audio-files-and-scrollable-text-preview-for-txt-files-multiple-files-can-be-loaded",
+      "title": "Build the central canvas area: a large cracked black stone panel with glowing fire vein overlay. Display bold blood-red gothic text 'Drop your creation here' when empty. Support drag-and-drop file upload directly onto the canvas for all file types: images (jpg/png/gif/webp), video (mp4/webm), text/lyrics (.txt), audio (mp3/wav). After upload, immediately render a preview: image thumbnail for photos, HTML5 video player for video, audio waveform visualization for audio files, and scrollable text preview for .txt files. Multiple files can be loaded.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-bottom-panel-with-three-elements-1-a-large-burning-stone-styled-ignite-button-with-fire-glow-animation-2-a-dragon-power-slider-labeled-with-that-name-controlling-generation-intensity-value-0-100-default-75-3-a-status-display-showing-awaiting-command-by-default-updating-to-reflect-current-action-state-e-g-generating-complete-error-all-elements-must-match-the-dark-stone-blood-red-aesthetic",
+      "title": "Build the bottom panel with three elements: (1) A large burning stone styled 'IGNITE' button with fire glow animation; (2) A 'Dragon Power' slider labeled with that name, controlling generation intensity (value 0–100, default 75); (3) A status display showing 'AWAITING COMMAND' by default, updating to reflect current action state (e.g., 'GENERATING...', 'COMPLETE', 'ERROR'). All elements must match the dark stone / blood-red aesthetic.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-effects-button-functionality-clicking-it-opens-a-dropdown-modal-overlay-with-a-menu-of-dragon-themed-visual-effects-that-can-be-applied-to-content-on-the-canvas-include-at-minimum-these-effects-fire-glow-chain-overlay-stone-crack-dragon-breath-ember-pulse-shadow-veil-blood-drip-each-effect-is-selectable-and-applies-a-css-filter-overlay-to-the-active-canvas-content-preview",
+      "title": "Implement the Effects button functionality: clicking it opens a dropdown/modal overlay with a menu of dragon-themed visual effects that can be applied to content on the canvas. Include at minimum these effects: Fire Glow, Chain Overlay, Stone Crack, Dragon Breath, Ember Pulse, Shadow Veil, Blood Drip. Each effect is selectable and applies a CSS filter/overlay to the active canvas content preview.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-music-gen-and-video-gen-toolbar-buttons-each-opens-a-modal-prompt-asking-the-user-for-a-text-seed-description-on-submission-send-the-seed-text-and-dragon-power-slider-value-to-the-red-hat-shepherd-main-backend-endpoint-as-a-post-request-display-a-loading-state-on-the-canvas-generating-status-on-response-render-the-result-in-the-canvas-audio-waveform-player-for-music-video-player-for-video-log-the-endpoint-connection-confirmation-to-the-browser-console-on-each-call",
+      "title": "Implement the Music Gen and Video Gen toolbar buttons: each opens a modal prompt asking the user for a text seed/description. On submission, send the seed text and Dragon Power slider value to the Red Hat shepherd-main backend endpoint as a POST request. Display a loading state on the canvas ('GENERATING...' status). On response, render the result in the canvas: audio waveform player for music, video player for video. Log the endpoint connection confirmation to the browser console on each call.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-ignite-button-on-click-collect-all-uploaded-canvas-content-files-plus-a-seed-text-prompt-prompt-user-if-no-text-file-is-loaded-combine-with-dragon-power-slider-value-and-send-as-a-post-request-to-the-red-hat-shepherd-main-endpoint-for-ai-generation-image-music-or-video-depending-on-content-type-display-the-returned-result-in-the-canvas-log-connection-confirmation-to-console",
+      "title": "Implement the IGNITE button: on click, collect all uploaded canvas content (files) plus a seed text prompt (prompt user if no text file is loaded), combine with Dragon Power slider value, and send as a POST request to the Red Hat shepherd-main endpoint for AI generation (image, music, or video depending on content type). Display the returned result in the canvas. Log connection confirmation to console.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-export-button-triggers-a-download-of-the-current-canvas-content-active-image-audio-video-with-an-invisible-user-specific-steganographic-style-text-watermark-embedded-in-the-filename-and-metadata-the-watermark-must-encode-the-user-s-identity-session-id-display-an-export-confirmation-in-the-status-area",
+      "title": "Implement the Export button: triggers a download of the current canvas content (active image/audio/video) with an invisible user-specific steganographic-style text watermark embedded in the filename and metadata. The watermark must encode the user's identity session ID. Display an export confirmation in the status area.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-hardcore-content-protection-on-all-canvas-content-1-disable-right-click-context-menu-over-the-canvas-and-any-media-previews-2-block-keyboard-shortcuts-for-save-ctrl-s-copy-ctrl-c-and-print-ctrl-p-3-apply-css-user-select-none-and-pointer-events-blocking-where-applicable-4-on-any-detected-violation-attempt-display-a-full-screen-ban-overlay-with-the-exact-message-the-dragon-caught-you-stealing-account-permanently-removed-created-by-skulls-for-the-people-who-wanna-stay-real-mark-the-user-s-session-as-permanently-banned-in-the-backend-once-banned-all-subsequent-page-loads-show-only-the-ban-overlay-note-browser-level-screenshot-prevention-is-not-technically-enforceable-protection-is-best-effort-via-js-event-blocking",
+      "title": "Implement hardcore content protection on all canvas content: (1) Disable right-click context menu over the canvas and any media previews; (2) Block keyboard shortcuts for save (Ctrl+S), copy (Ctrl+C), and print (Ctrl+P); (3) Apply CSS user-select: none and pointer-events blocking where applicable; (4) On any detected violation attempt, display a full-screen ban overlay with the exact message: 'The Dragon caught you stealing. Account permanently removed. Created by Skulls for the people who wanna stay real.' Mark the user's session as permanently banned in the backend. Once banned, all subsequent page loads show only the ban overlay. Note: browser-level screenshot prevention is not technically enforceable; protection is best-effort via JS event blocking.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-internet-identity-authentication-require-users-to-log-in-via-internet-identity-before-they-can-upload-files-or-trigger-generation-show-a-login-prompt-with-the-dark-dragon-aesthetic-if-unauthenticated-after-login-display-the-user-s-short-principal-id-in-the-ui-use-the-existing-useinternetidentity-hook",
+      "title": "Implement Internet Identity authentication: require users to log in via Internet Identity before they can upload files or trigger generation. Show a login prompt with the dark dragon aesthetic if unauthenticated. After login, display the user's short principal ID in the UI. Use the existing useInternetIdentity hook.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-custom-emoji-picker-panel-with-exactly-15-foreverraw-gargoyle-dragon-emojis-each-emoji-must-be-a-rendered-image-asset-with-heavy-textured-stone-metal-dragon-scale-style-and-red-orange-glow-the-15-emojis-are-dragon-eye-ember-chain-link-skull-raw-heart-lightning-strike-stone-blade-void-dragon-shield-raw-rage-burning-heart-prayer-watching-steel-the-emoji-picker-should-be-accessible-from-a-dragon-icon-button-and-allow-inserting-emojis-into-any-active-text-input-or-seed-prompt-field",
+      "title": "Build a custom emoji picker panel with exactly 15 ForeverRaw Gargoyle Dragon emojis. Each emoji must be a rendered image asset with heavy textured stone/metal/dragon-scale style and red-orange glow. The 15 emojis are: Dragon Eye, Ember, Chain Link, Skull, Raw Heart, Lightning Strike, Stone, Blade, Void, Dragon Shield, Raw Rage, Burning Heart, Prayer, Watching, Steel. The emoji picker should be accessible from a dragon-icon button and allow inserting emojis into any active text input or seed prompt field.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Dark dragon/gargoyle aesthetic UI – cracked black stone background, glowing ember cracks, massive gargoyle dragon face, cinematic lighting",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Toolbar with 5 forged-metal buttons: Upload Photo, Upload Video, Music Gen, Video Gen, Export; Effects button below centered",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Central canvas with drag-and-drop and button upload for photos, videos, text, audio; immediate previews (thumbnails, waveform, text)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Bottom panel with IGNITE button, Dragon Power slider (generation intensity), and AWAITING COMMAND status display",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Effects menu with dragon-themed effects (fire glow, chain overlay, stone crack, etc.)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Music Gen and Video Gen: prompt user for text/seed, send to Red Hat shepherd-main endpoint, display result in canvas",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "IGNITE button sends uploaded content + seed text to Red Hat AI for image/music/video generation, returns result in canvas",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Export: download final creation with invisible user-specific watermark",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Hardcore content protection: block right-click/screenshot/copy, invisible watermark, permanent ban with dragon message on violation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "15 custom ForeverRaw Gargoyle Dragon emojis in emoji picker (stone/metal/dragon-scale style with red-orange glow)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Red Hat shepherd-main backend integration for AI content generation; confirm connection in console",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Internet identity verification (email/phone) required for uploads; ban status tied to identity permanently",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Store ban records in the Motoko backend: a stable data store mapping user principal (Internet Identity) to ban status (boolean) and ban timestamp. Expose query functions to check ban status and update functions to set ban. On app load, check ban status for the authenticated user and show ban overlay if banned.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Void Metal Studio",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

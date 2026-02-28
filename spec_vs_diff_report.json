@@ -1,0 +1,107 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-27T15:30:07.997Z",
+  "summary": "The diff implements a substantial portion of the Void Metal Studio requirements across frontend and backend. Most core features are present: dark theme, toolbar, canvas, bottom panel, effects menu, emoji picker, Internet Identity auth, ban system, export with watermarked filename, content protection, generation modal, and Red Hat shepherd-main endpoint integration. However, several specific acceptance criteria and requirements have gaps, particularly around the Ctrl+C keyboard shortcut blocking, the isBanned function signature mismatch, stable storage persistence, and a hallucinated profile setup flow.",
+  "missing_requirements": [
+    {
+      "requirement": "Block Ctrl+C keyboard shortcut for copy on canvas",
+      "reason": "In App.tsx the keydown handler only blocks Ctrl+S and Ctrl+P by checking ['s', 'p'].includes(e.key.toLowerCase()), but Ctrl+C is not included in the blocked shortcuts array.",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "requirement": "isBanned(principal) query returns ban status for a given principal",
+      "reason": "The backend isBanned() function checks the caller's own ban status with no principal argument. The spec AC says 'isBanned(principal) query returns ban status', implying it should accept a principal parameter.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "requirement": "setBan(principal) update function marks user as permanently banned",
+      "reason": "The backend exposes banUser() (self-ban) and adminBanUser(target) but not a function named setBan(principal) as specified in the AC.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "requirement": "Ban status persists across canister upgrades via stable storage",
+      "reason": "The bans map is declared as 'let bans = Map.empty<Principal, Time.Time>()' without a 'stable var' modifier, meaning ban records will be lost on canister upgrade.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Audio files render a waveform visualization immediately after upload",
+      "reason": "The WaveformVisualizer only initializes the AudioContext and draws the waveform on audio play (initAudio called onPlay). No static waveform is rendered upon file load before playback starts.",
+      "evidence": [
+        "frontend/src/components/Canvas.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "ProfileSetup modal requiring users to enter a warrior name before accessing the studio",
+      "reason": "The build request has no requirement for a user profile setup step or name entry. The spec only requires Internet Identity login and displaying the principal ID.",
+      "evidence": [
+        "frontend/src/components/ProfileSetup.tsx",
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "description": "UserProfile data type with name field stored in the backend, plus getCallerUserProfile, getUserProfile, and saveCallerUserProfile canister functions",
+      "reason": "No requirement in the build request asks for user profiles with names to be stored in the backend. Only ban records are specified for backend storage.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "description": "adminUnbanUser function exposed in the backend to unban users",
+      "reason": "The spec only requires setBan and isBanned functions. An unban admin function was not requested.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "getBanTimestamp query function in the backend",
+      "reason": "The spec does not request a ban timestamp retrieval function, only ban status storage and query.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "confidence": 0.77,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/BanOverlay.tsx",
+    "frontend/src/components/BottomPanel.tsx",
+    "frontend/src/components/Canvas.tsx",
+    "frontend/src/components/EffectsMenu.tsx",
+    "frontend/src/components/EmojiPicker.tsx",
+    "frontend/src/components/GenerationModal.tsx",
+    "frontend/src/components/LoginPrompt.tsx",
+    "frontend/src/components/ProfileSetup.tsx",
+    "frontend/src/components/Toolbar.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useExport.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useRedHatGeneration.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

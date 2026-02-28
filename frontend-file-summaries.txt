@@ -1,0 +1,17 @@
+{
+  "frontend/src/index.css": "Global styles for Void Metal Studio with OKLCH dark stone color system, gothic Cinzel font imports, forged-metal button styles, fire vein overlays, IGNITE pulse animations, dragon effect classes, custom range slider, and content protection utilities.",
+  "frontend/tailwind.config.js": "Tailwind configuration extended with Cinzel gothic font families, Void Metal custom color tokens (blood-red, ember-orange, stone variants), glow box shadows, and ignite/ember/crack-glow keyframe animations.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for user profile (get/save) and ban status (check/set) backend operations with proper actor dependency handling and cache invalidation.",
+  "frontend/src/hooks/useRedHatGeneration.ts": "Custom hook for calling the Red Hat shepherd-main endpoint with music/video/image/ignite generation payloads, console confirmation logging, and demo mode fallback when endpoint is unreachable.",
+  "frontend/src/hooks/useExport.ts": "Export hook that downloads canvas content with a user-principal-encoded steganographic watermark embedded in the filename.",
+  "frontend/src/components/BanOverlay.tsx": "Full-screen permanent ban overlay with the exact required ban message, dragon eye and skull imagery, and dramatic dark fantasy styling.",
+  "frontend/src/components/LoginPrompt.tsx": "Dark dragon-themed login screen with gargoyle background, gothic title, and Internet Identity login button shown to unauthenticated users.",
+  "frontend/src/components/ProfileSetup.tsx": "First-login modal prompting users to enter their warrior name, saving it via the backend saveCallerUserProfile mutation.",
+  "frontend/src/components/GenerationModal.tsx": "Dragon-themed modal for music/video/ignite seed text input with quick emoji insertion, styled with cracked stone aesthetic.",
+  "frontend/src/components/EffectsMenu.tsx": "Dropdown effects menu with 7 dragon-themed visual effects (Fire Glow, Chain Overlay, Stone Crack, Dragon Breath, Ember Pulse, Shadow Veil, Blood Drip) that apply CSS classes to canvas content.",
+  "frontend/src/components/EmojiPicker.tsx": "Grid picker displaying all 15 ForeverRaw Gargoyle Dragon emoji image assets with click-to-copy functionality and dark stone styling.",
+  "frontend/src/components/Canvas.tsx": "Central canvas with drag-and-drop file upload, multi-type preview rendering (image thumbnails, audio waveform visualizer, video player, text preview), content protection (right-click/keyboard blocking), and generated result display.",
+  "frontend/src/components/Toolbar.tsx": "Top toolbar with 5 forged-metal cracked-stone styled buttons (Upload Photo, Upload Video, Music Gen, Video Gen, Export) with dragon emoji icons and blood-red gothic labels.",
+  "frontend/src/components/BottomPanel.tsx": "Bottom panel with animated IGNITE button, Dragon Power range slider (0–100, default 75), and dynamic status display with color-coded states.",
+  "frontend/src/App.tsx": "Main application orchestrator managing authentication flow (login/ban/profile setup guards), canvas state, generation modals, effects, emoji picker, export, and content protection with the complete dark dragon UI layout."
+}
