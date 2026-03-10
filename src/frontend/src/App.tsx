@@ -8,18 +8,24 @@ import {
 } from "./hooks/useQueries";
 import { useRedHatGeneration } from "./hooks/useRedHatGeneration";
 
+import AISidebar from "./components/AISidebar";
 import BanOverlay from "./components/BanOverlay";
 import BottomPanel from "./components/BottomPanel";
 import Canvas, {
   type CanvasFile,
   type GeneratedResult,
 } from "./components/Canvas";
+import DesignCanvas from "./components/DesignCanvas";
 import EffectsMenu, { type EffectName } from "./components/EffectsMenu";
 import EmojiPicker from "./components/EmojiPicker";
 import GenerationModal from "./components/GenerationModal";
 import LoginPrompt from "./components/LoginPrompt";
 import ProfileSetup from "./components/ProfileSetup";
+import ProjectHub from "./components/ProjectHub";
 import Toolbar from "./components/Toolbar";
+import VideoTimeline from "./components/VideoTimeline";
+
+type AppView = "studio" | "hub" | "canvas" | "video";
 
 export default function App() {
   const { identity, clear, isInitializing } = useInternetIdentity();
@@ -36,6 +42,9 @@ export default function App() {
   const { generate, isGenerating } = useRedHatGeneration();
   const { exportContent } = useExport();
 
+  // View state
+  const [view, setView] = useState<AppView>("studio");
+
   // Canvas state
   const [canvasFiles, setCanvasFiles] = useState<CanvasFile[]>([]);
   const [generatedResults, setGeneratedResults] = useState<GeneratedResult[]>(
@@ -51,6 +60,10 @@ export default function App() {
   const [genModalOpen, setGenModalOpen] = useState<
     "music" | "video" | "ignite" | null
   >(null);
+  const [aiSidebarOpen, setAiSidebarOpen] = useState(false);
+
+  // Hub content from AI Scribe
+  const [hubAIContent, setHubAIContent] = useState<string[]>([]);
 
   // File input refs for toolbar buttons
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -63,11 +76,10 @@ export default function App() {
     profileFetched &&
     userProfile === null;
 
-  // ─── Content Protection ────────────────────────────────────────────────────
+  // ─── Content Protection ─────────────────────────────────────────────────────
 
   const handleViolation = useCallback(() => {
     if (!isAuthenticated) return;
-    // Content protection violation — re-check ban status from backend
     queryClient.invalidateQueries({ queryKey: ["isBanned"] });
   }, [isAuthenticated, queryClient]);
 
@@ -88,7 +100,7 @@ export default function App() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [canvasFiles.length, generatedResults.length, handleViolation]);
 
-  // ─── File Upload Handlers ──────────────────────────────────────────────────
+  // ─── File Upload Handlers ──────────────────────────────────────────────────────
 
   const handleFilesAdded = useCallback((newFiles: CanvasFile[]) => {
     setCanvasFiles((prev) => [...prev, ...newFiles]);
@@ -141,7 +153,7 @@ export default function App() {
     handleFilesAdded(processed);
   };
 
-  // ─── Generation Handlers ───────────────────────────────────────────────────
+  // ─── Generation Handlers ──────────────────────────────────────────────────────
 
   const handleMusicGen = () => {
     if (!isAuthenticated) return;
@@ -186,17 +198,14 @@ export default function App() {
     }
   };
 
-  // ─── IGNITE Handler ────────────────────────────────────────────────────────
+  // ─── IGNITE ───────────────────────────────────────────────────────────────────
 
   const handleIgnite = () => {
     if (!isAuthenticated) return;
-    // Check if there's a text seed from uploaded text files
     const textFile = canvasFiles.find((f) => f.type === "text");
     if (textFile?.textContent) {
-      // Use text content as seed directly
       handleIgniteWithSeed(textFile.textContent.slice(0, 500));
     } else {
-      // Prompt for seed
       setGenModalOpen("ignite");
     }
   };
@@ -231,13 +240,12 @@ export default function App() {
     }
   };
 
-  // ─── Export Handler ────────────────────────────────────────────────────────
+  // ─── Export ───────────────────────────────────────────────────────────────────
 
   const handleExport = () => {
     const hasContent = canvasFiles.length > 0 || generatedResults.length > 0;
     if (!hasContent) return;
 
-    // Export the most recent generated result, or first canvas file
     const latestGen = generatedResults[generatedResults.length - 1];
     const firstFile = canvasFiles[0];
 
@@ -262,7 +270,15 @@ export default function App() {
     setStatusText("EXPORT COMPLETE");
   };
 
-  // ─── Logout ────────────────────────────────────────────────────────────────
+  // ─── AI Scribe ────────────────────────────────────────────────────────────────
+
+  const handleSendToHub = useCallback((content: string) => {
+    setHubAIContent((prev) => [...prev, content]);
+    setStatusText("CONTENT SENT TO HUB");
+    setTimeout(() => setStatusText("AWAITING COMMAND"), 2500);
+  }, []);
+
+  // ─── Logout ──────────────────────────────────────────────────────────────────
 
   const handleLogout = async () => {
     await clear();
@@ -270,9 +286,11 @@ export default function App() {
     setCanvasFiles([]);
     setGeneratedResults([]);
     setStatusText("AWAITING COMMAND");
+    setView("studio");
+    setAiSidebarOpen(false);
   };
 
-  // ─── Render Guards ─────────────────────────────────────────────────────────
+  // ─── Render Guards ───────────────────────────────────────────────────────────
 
   if (isInitializing || (isAuthenticated && banLoading)) {
     return (
@@ -350,7 +368,7 @@ export default function App() {
 
       {/* ── HEADER ── */}
       <header
-        className="relative z-10 stone-panel px-4 py-3 flex items-center justify-between"
+        className="relative z-10 stone-panel px-4 py-3 flex items-center justify-between gap-3"
         style={{
           borderBottom: "1px solid oklch(0.3 0.08 25)",
           borderLeft: "none",
@@ -359,7 +377,7 @@ export default function App() {
         }}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-shrink-0">
           <img
             src="/assets/generated/emoji-dragon-eye.dim_128x128.png"
             alt="Void Metal Studio"
@@ -379,8 +397,119 @@ export default function App() {
           </div>
         </div>
 
+        {/* ── View Nav + AI Scribe Toggle ── */}
+        <nav
+          className="flex items-center gap-1 flex-wrap"
+          aria-label="Main navigation"
+        >
+          <button
+            type="button"
+            onClick={() => setView("studio")}
+            data-ocid="nav.studio.tab"
+            className="forge-btn px-3 py-1.5 text-xs tracking-widest"
+            style={{
+              color:
+                view === "studio"
+                  ? "oklch(0.75 0.25 25)"
+                  : "oklch(0.5 0.06 30)",
+              borderColor:
+                view === "studio" ? "oklch(0.5 0.2 25)" : "oklch(0.25 0.04 25)",
+              boxShadow:
+                view === "studio"
+                  ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
+                  : undefined,
+            }}
+            aria-current={view === "studio" ? "page" : undefined}
+          >
+            🔥 STUDIO
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("hub")}
+            data-ocid="nav.hub.tab"
+            className="forge-btn px-3 py-1.5 text-xs tracking-widest"
+            style={{
+              color:
+                view === "hub" ? "oklch(0.75 0.25 25)" : "oklch(0.5 0.06 30)",
+              borderColor:
+                view === "hub" ? "oklch(0.5 0.2 25)" : "oklch(0.25 0.04 25)",
+              boxShadow:
+                view === "hub"
+                  ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
+                  : undefined,
+            }}
+            aria-current={view === "hub" ? "page" : undefined}
+          >
+            ⚔ FORGE HUB
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setView("canvas")}
+            data-ocid="design_canvas.tab"
+            className="forge-btn px-3 py-1.5 text-xs tracking-widest"
+            style={{
+              color:
+                view === "canvas"
+                  ? "oklch(0.75 0.25 25)"
+                  : "oklch(0.5 0.06 30)",
+              borderColor:
+                view === "canvas" ? "oklch(0.5 0.2 25)" : "oklch(0.25 0.04 25)",
+              boxShadow:
+                view === "canvas"
+                  ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
+                  : undefined,
+            }}
+            aria-current={view === "canvas" ? "page" : undefined}
+          >
+            🎨 DESIGN
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setView("video")}
+            data-ocid="nav.video.tab"
+            className="forge-btn px-3 py-1.5 text-xs tracking-widest"
+            style={{
+              color:
+                view === "video" ? "oklch(0.75 0.25 25)" : "oklch(0.5 0.06 30)",
+              borderColor:
+                view === "video" ? "oklch(0.5 0.2 25)" : "oklch(0.25 0.04 25)",
+              boxShadow:
+                view === "video"
+                  ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
+                  : undefined,
+            }}
+            aria-current={view === "video" ? "page" : undefined}
+          >
+            🎬 VIDEO
+          </button>
+
+          {/* AI Scribe Toggle */}
+          <button
+            type="button"
+            onClick={() => setAiSidebarOpen((v) => !v)}
+            data-ocid="nav.ai_sidebar.toggle"
+            className="forge-btn px-3 py-1.5 text-xs tracking-widest"
+            style={{
+              color: aiSidebarOpen
+                ? "oklch(0.75 0.25 25)"
+                : "oklch(0.5 0.06 30)",
+              borderColor: aiSidebarOpen
+                ? "oklch(0.5 0.2 25)"
+                : "oklch(0.25 0.04 25)",
+              boxShadow: aiSidebarOpen
+                ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
+                : undefined,
+            }}
+            aria-pressed={aiSidebarOpen}
+          >
+            🐉 AI SCRIBE
+          </button>
+        </nav>
+
         {/* User info + logout */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-shrink-0">
           <div className="hidden sm:flex items-center gap-2">
             <img
               src="/assets/generated/emoji-dragon-shield.dim_128x128.png"
@@ -400,6 +529,7 @@ export default function App() {
           <button
             type="button"
             onClick={handleLogout}
+            data-ocid="nav.logout.button"
             className="forge-btn px-3 py-1.5 text-xs tracking-widest"
             style={{ color: "oklch(0.5 0.05 25)" }}
           >
@@ -409,80 +539,109 @@ export default function App() {
       </header>
 
       {/* ── MAIN ── */}
-      <main className="relative z-10 flex-1 flex flex-col gap-3 p-3 md:p-4">
-        {/* Toolbar */}
-        <Toolbar
-          onUploadPhoto={handleUploadPhoto}
-          onUploadVideo={handleUploadVideo}
-          onMusicGen={handleMusicGen}
-          onVideoGen={handleVideoGen}
-          onExport={handleExport}
-          canExport={hasContent}
-          isAuthenticated={isAuthenticated}
-        />
-
-        {/* Effects button row */}
-        <div className="relative flex justify-center">
-          <button
-            type="button"
-            onClick={() => setEffectsMenuOpen((v) => !v)}
-            className="forge-btn flex items-center gap-2 px-6 py-2 text-xs tracking-widest"
-            style={
-              activeEffect
-                ? {
-                    borderColor: "oklch(0.55 0.22 25)",
-                    color: "oklch(0.75 0.25 25)",
-                  }
-                : {}
-            }
-          >
-            <img
-              src="/assets/generated/emoji-dragon-eye.dim_128x128.png"
-              alt=""
-              className="w-5 h-5"
-              style={{
-                filter: "drop-shadow(0 0 6px oklch(0.65 0.28 25 / 0.7))",
-              }}
+      <main className="relative z-10 flex-1 flex flex-col">
+        {view === "canvas" ? (
+          <DesignCanvas />
+        ) : view === "video" ? (
+          <VideoTimeline />
+        ) : view === "hub" ? (
+          <div className="flex flex-1">
+            <div className="flex-1">
+              <ProjectHub hubAIContent={hubAIContent} />
+            </div>
+            <AISidebar
+              isOpen={aiSidebarOpen}
+              onClose={() => setAiSidebarOpen(false)}
+              onSendToHub={handleSendToHub}
             />
-            EFFECTS
-            {activeEffect && (
-              <span
-                className="ml-1 text-xs"
-                style={{ color: "oklch(0.65 0.22 42)" }}
-              >
-                [{activeEffect.toUpperCase().replace("-", " ")}]
-              </span>
-            )}
-          </button>
+          </div>
+        ) : (
+          <div className="flex flex-1 gap-0">
+            {/* Studio content */}
+            <div className="flex-1 flex flex-col gap-3 p-3 md:p-4 min-w-0">
+              {/* Toolbar */}
+              <Toolbar
+                onUploadPhoto={handleUploadPhoto}
+                onUploadVideo={handleUploadVideo}
+                onMusicGen={handleMusicGen}
+                onVideoGen={handleVideoGen}
+                onExport={handleExport}
+                canExport={hasContent}
+                isAuthenticated={isAuthenticated}
+              />
 
-          {/* Effects menu */}
-          <EffectsMenu
-            isOpen={effectsMenuOpen}
-            activeEffect={activeEffect}
-            onSelectEffect={setActiveEffect}
-            onClose={() => setEffectsMenuOpen(false)}
-          />
-        </div>
+              {/* Effects button row */}
+              <div className="relative flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setEffectsMenuOpen((v) => !v)}
+                  className="forge-btn flex items-center gap-2 px-6 py-2 text-xs tracking-widest"
+                  style={
+                    activeEffect
+                      ? {
+                          borderColor: "oklch(0.55 0.22 25)",
+                          color: "oklch(0.75 0.25 25)",
+                        }
+                      : {}
+                  }
+                >
+                  <img
+                    src="/assets/generated/emoji-dragon-eye.dim_128x128.png"
+                    alt=""
+                    className="w-5 h-5"
+                    style={{
+                      filter: "drop-shadow(0 0 6px oklch(0.65 0.28 25 / 0.7))",
+                    }}
+                  />
+                  EFFECTS
+                  {activeEffect && (
+                    <span
+                      className="ml-1 text-xs"
+                      style={{ color: "oklch(0.65 0.22 42)" }}
+                    >
+                      [{activeEffect.toUpperCase().replace("-", " ")}]
+                    </span>
+                  )}
+                </button>
 
-        {/* Canvas */}
-        <Canvas
-          activeEffect={activeEffect}
-          onViolation={handleViolation}
-          files={canvasFiles}
-          generatedResults={generatedResults}
-          onFilesAdded={handleFilesAdded}
-          isAuthenticated={isAuthenticated}
-        />
+                {/* Effects menu */}
+                <EffectsMenu
+                  isOpen={effectsMenuOpen}
+                  activeEffect={activeEffect}
+                  onSelectEffect={setActiveEffect}
+                  onClose={() => setEffectsMenuOpen(false)}
+                />
+              </div>
 
-        {/* Bottom panel */}
-        <BottomPanel
-          dragonPower={dragonPower}
-          onDragonPowerChange={setDragonPower}
-          onIgnite={handleIgnite}
-          statusText={statusText}
-          isGenerating={isGenerating}
-          isAuthenticated={isAuthenticated}
-        />
+              {/* Canvas */}
+              <Canvas
+                activeEffect={activeEffect}
+                onViolation={handleViolation}
+                files={canvasFiles}
+                generatedResults={generatedResults}
+                onFilesAdded={handleFilesAdded}
+                isAuthenticated={isAuthenticated}
+              />
+
+              {/* Bottom panel */}
+              <BottomPanel
+                dragonPower={dragonPower}
+                onDragonPowerChange={setDragonPower}
+                onIgnite={handleIgnite}
+                statusText={statusText}
+                isGenerating={isGenerating}
+                isAuthenticated={isAuthenticated}
+              />
+            </div>
+
+            {/* AI Sidebar */}
+            <AISidebar
+              isOpen={aiSidebarOpen}
+              onClose={() => setAiSidebarOpen(false)}
+              onSendToHub={handleSendToHub}
+            />
+          </div>
+        )}
       </main>
 
       {/* ── FOOTER ── */}
