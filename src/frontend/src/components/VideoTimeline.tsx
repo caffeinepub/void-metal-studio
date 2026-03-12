@@ -2,6 +2,8 @@ import { Toaster } from "@/components/ui/sonner";
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
+import type { Project } from "../backend";
+import { useUpdateProject } from "../hooks/useQueries";
 
 interface Clip {
   id: string;
@@ -46,7 +48,27 @@ function formatTime(secs: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-export default function VideoTimeline() {
+export default function VideoTimeline({
+  activeProject,
+}: { activeProject: Project | null }) {
+  const updateProject = useUpdateProject();
+  const [videoNotesText, setVideoNotesText] = useState(
+    activeProject?.videoNotes ?? "",
+  );
+
+  const handleVideoNotesBlur = async () => {
+    if (!activeProject) return;
+    await updateProject
+      .mutateAsync({
+        id: activeProject.id,
+        title: activeProject.title,
+        scriptContent: activeProject.scriptContent,
+        designNotes: activeProject.designNotes,
+        videoNotes: videoNotesText,
+      })
+      .catch(() => {});
+  };
+
   const [clips, setClips] = useState<Clip[]>([
     {
       id: "clip-1",
@@ -221,6 +243,46 @@ export default function VideoTimeline() {
         }}
       />
 
+      {/* Project notes */}
+      {activeProject && (
+        <div
+          className="stone-panel px-4 py-3 flex flex-col gap-2"
+          style={{ borderRadius: "4px" }}
+        >
+          <p
+            style={{
+              fontFamily: "Cinzel, serif",
+              fontSize: "0.65rem",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              color: "oklch(0.65 0.28 25)",
+            }}
+          >
+            \uD83C\uDFA6 {activeProject.title.toUpperCase()} — VIDEO NOTES
+          </p>
+          <textarea
+            value={videoNotesText}
+            onChange={(e) => setVideoNotesText(e.target.value)}
+            onBlur={handleVideoNotesBlur}
+            placeholder="Add video notes, captions or production details..."
+            data-ocid="video_timeline.textarea"
+            rows={2}
+            style={{
+              width: "100%",
+              background: "oklch(0.07 0.005 20)",
+              border: "1px solid oklch(0.28 0.07 25)",
+              borderRadius: "3px",
+              padding: "7px 10px",
+              fontFamily: "Cinzel, serif",
+              fontSize: "0.72rem",
+              color: "oklch(0.78 0.03 40)",
+              letterSpacing: "0.03em",
+              resize: "none",
+              outline: "none",
+            }}
+          />
+        </div>
+      )}
       {/* Header row */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>

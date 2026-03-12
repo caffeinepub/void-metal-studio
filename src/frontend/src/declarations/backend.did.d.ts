@@ -10,6 +10,27 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface AIMessage {
+  'content' : string,
+  'role' : string,
+  'timestamp' : Time,
+}
+export interface Project {
+  'id' : string,
+  'title' : string,
+  'scriptContent' : string,
+  'createdAt' : Time,
+  'designNotes' : string,
+  'videoNotes' : string,
+  'updatedAt' : Time,
+  'stage' : ProjectStage,
+  'aiHistory' : Array<AIMessage>,
+}
+export type ProjectStage = { 'video' : null } |
+  { 'idea' : null } |
+  { 'script' : null } |
+  { 'published' : null } |
+  { 'visuals' : null };
 export type Time = bigint;
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
@@ -17,17 +38,28 @@ export type UserRole = { 'admin' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addAIMessage' : ActorMethod<[string, string, string], boolean>,
   'adminBanUser' : ActorMethod<[Principal], undefined>,
   'adminIsBanned' : ActorMethod<[Principal], boolean>,
   'adminUnbanUser' : ActorMethod<[Principal], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'createProject' : ActorMethod<[string], string>,
+  'deleteProject' : ActorMethod<[string], boolean>,
+  'getAIHistory' : ActorMethod<[string], Array<AIMessage>>,
   'getBanTimestamp' : ActorMethod<[], Time>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getProject' : ActorMethod<[string], [] | [Project]>,
+  'getProjects' : ActorMethod<[], Array<Project>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isBanned' : ActorMethod<[], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'updateProject' : ActorMethod<
+    [string, string, string, string, string],
+    boolean
+  >,
+  'updateProjectStage' : ActorMethod<[string, ProjectStage], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

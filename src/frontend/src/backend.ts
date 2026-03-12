@@ -89,9 +89,32 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface AIMessage {
+    content: string;
+    role: string;
+    timestamp: Time;
+}
 export type Time = bigint;
+export interface Project {
+    id: string;
+    title: string;
+    scriptContent: string;
+    createdAt: Time;
+    designNotes: string;
+    videoNotes: string;
+    updatedAt: Time;
+    stage: ProjectStage;
+    aiHistory: Array<AIMessage>;
+}
 export interface UserProfile {
     name: string;
+}
+export enum ProjectStage {
+    video = "video",
+    idea = "idea",
+    script = "script",
+    published = "published",
+    visuals = "visuals"
 }
 export enum UserRole {
     admin = "admin",
@@ -100,19 +123,27 @@ export enum UserRole {
 }
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    addAIMessage(projectId: string, role: string, content: string): Promise<boolean>;
     adminBanUser(target: Principal): Promise<void>;
     adminIsBanned(target: Principal): Promise<boolean>;
     adminUnbanUser(target: Principal): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    createProject(title: string): Promise<string>;
+    deleteProject(id: string): Promise<boolean>;
+    getAIHistory(projectId: string): Promise<Array<AIMessage>>;
     getBanTimestamp(): Promise<Time>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getProject(id: string): Promise<Project | null>;
+    getProjects(): Promise<Array<Project>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isBanned(): Promise<boolean>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    updateProject(id: string, title: string, scriptContent: string, designNotes: string, videoNotes: string): Promise<boolean>;
+    updateProjectStage(id: string, stage: ProjectStage): Promise<boolean>;
 }
-import type { UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { AIMessage as _AIMessage, Project as _Project, ProjectStage as _ProjectStage, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -126,6 +157,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor._initializeAccessControlWithSecret(arg0);
+            return result;
+        }
+    }
+    async addAIMessage(arg0: string, arg1: string, arg2: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addAIMessage(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addAIMessage(arg0, arg1, arg2);
             return result;
         }
     }
@@ -185,6 +230,48 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async createProject(arg0: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createProject(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createProject(arg0);
+            return result;
+        }
+    }
+    async deleteProject(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteProject(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteProject(arg0);
+            return result;
+        }
+    }
+    async getAIHistory(arg0: string): Promise<Array<AIMessage>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAIHistory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAIHistory(arg0);
+            return result;
+        }
+    }
     async getBanTimestamp(): Promise<Time> {
         if (this.processError) {
             try {
@@ -225,6 +312,34 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getCallerUserRole();
             return from_candid_UserRole_n4(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getProject(arg0: string): Promise<Project | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getProject(arg0);
+                return from_candid_opt_n6(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getProject(arg0);
+            return from_candid_opt_n6(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getProjects(): Promise<Array<Project>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getProjects();
+                return from_candid_vec_n11(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getProjects();
+            return from_candid_vec_n11(this._uploadFile, this._downloadFile, result);
         }
     }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
@@ -283,12 +398,95 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async updateProject(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateProject(arg0, arg1, arg2, arg3, arg4);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateProject(arg0, arg1, arg2, arg3, arg4);
+            return result;
+        }
+    }
+    async updateProjectStage(arg0: string, arg1: ProjectStage): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateProjectStage(arg0, to_candid_ProjectStage_n12(this._uploadFile, this._downloadFile, arg1));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateProjectStage(arg0, to_candid_ProjectStage_n12(this._uploadFile, this._downloadFile, arg1));
+            return result;
+        }
+    }
+}
+function from_candid_ProjectStage_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ProjectStage): ProjectStage {
+    return from_candid_variant_n10(_uploadFile, _downloadFile, value);
+}
+function from_candid_Project_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Project): Project {
+    return from_candid_record_n8(_uploadFile, _downloadFile, value);
 }
 function from_candid_UserRole_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
     return from_candid_variant_n5(_uploadFile, _downloadFile, value);
 }
 function from_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Project]): Project | null {
+    return value.length === 0 ? null : from_candid_Project_n7(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_record_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: string;
+    title: string;
+    scriptContent: string;
+    createdAt: _Time;
+    designNotes: string;
+    videoNotes: string;
+    updatedAt: _Time;
+    stage: _ProjectStage;
+    aiHistory: Array<_AIMessage>;
+}): {
+    id: string;
+    title: string;
+    scriptContent: string;
+    createdAt: Time;
+    designNotes: string;
+    videoNotes: string;
+    updatedAt: Time;
+    stage: ProjectStage;
+    aiHistory: Array<AIMessage>;
+} {
+    return {
+        id: value.id,
+        title: value.title,
+        scriptContent: value.scriptContent,
+        createdAt: value.createdAt,
+        designNotes: value.designNotes,
+        videoNotes: value.videoNotes,
+        updatedAt: value.updatedAt,
+        stage: from_candid_ProjectStage_n9(_uploadFile, _downloadFile, value.stage),
+        aiHistory: value.aiHistory
+    };
+}
+function from_candid_variant_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    video: null;
+} | {
+    idea: null;
+} | {
+    script: null;
+} | {
+    published: null;
+} | {
+    visuals: null;
+}): ProjectStage {
+    return "video" in value ? ProjectStage.video : "idea" in value ? ProjectStage.idea : "script" in value ? ProjectStage.script : "published" in value ? ProjectStage.published : "visuals" in value ? ProjectStage.visuals : value;
 }
 function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
@@ -299,8 +497,37 @@ function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uin
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
+function from_candid_vec_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Project>): Array<Project> {
+    return value.map((x)=>from_candid_Project_n7(_uploadFile, _downloadFile, x));
+}
+function to_candid_ProjectStage_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProjectStage): _ProjectStage {
+    return to_candid_variant_n13(_uploadFile, _downloadFile, value);
+}
 function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_variant_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProjectStage): {
+    video: null;
+} | {
+    idea: null;
+} | {
+    script: null;
+} | {
+    published: null;
+} | {
+    visuals: null;
+} {
+    return value == ProjectStage.video ? {
+        video: null
+    } : value == ProjectStage.idea ? {
+        idea: null
+    } : value == ProjectStage.script ? {
+        script: null
+    } : value == ProjectStage.published ? {
+        published: null
+    } : value == ProjectStage.visuals ? {
+        visuals: null
+    } : value;
 }
 function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
     admin: null;

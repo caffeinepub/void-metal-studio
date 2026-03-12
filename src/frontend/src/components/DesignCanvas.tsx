@@ -1,5 +1,7 @@
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
+import type { Project } from "../backend";
+import { useUpdateProject } from "../hooks/useQueries";
 
 type ElementType = "text" | "rect" | "circle" | "image";
 
@@ -25,7 +27,28 @@ function uid() {
   return Math.random().toString(36).slice(2, 10);
 }
 
-export default function DesignCanvas() {
+export default function DesignCanvas({
+  activeProject,
+}: { activeProject: Project | null }) {
+  const updateProject = useUpdateProject();
+  const [designNotesText, setDesignNotesText] = useState(
+    activeProject?.designNotes ?? "",
+  );
+  const [notesOpen, setNotesOpen] = useState(false);
+
+  const handleDesignNotesBlur = async () => {
+    if (!activeProject) return;
+    await updateProject
+      .mutateAsync({
+        id: activeProject.id,
+        title: activeProject.title,
+        scriptContent: activeProject.scriptContent,
+        designNotes: designNotesText,
+        videoNotes: activeProject.videoNotes,
+      })
+      .catch(() => {});
+  };
+
   const [elements, setElements] = useState<CanvasElement[]>([
     {
       id: uid(),
@@ -241,6 +264,63 @@ export default function DesignCanvas() {
         minHeight: "100vh",
       }}
     >
+      {/* Project notes panel */}
+      {activeProject && (
+        <div
+          style={{
+            borderBottom: "1px solid #2a0a0a",
+            background: "#0d0002",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setNotesOpen((v) => !v)}
+            data-ocid="design_canvas.toggle"
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "6px 16px",
+              fontFamily: "Cinzel, serif",
+              fontSize: "0.62rem",
+              letterSpacing: "0.12em",
+              color: "#cc0000",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            <span>🎨 {activeProject.title.toUpperCase()} — DESIGN NOTES</span>
+            <span>{notesOpen ? "▲" : "▼"}</span>
+          </button>
+          {notesOpen && (
+            <div style={{ padding: "0 16px 10px" }}>
+              <textarea
+                value={designNotesText}
+                onChange={(e) => setDesignNotesText(e.target.value)}
+                onBlur={handleDesignNotesBlur}
+                placeholder="Add design notes for this project..."
+                data-ocid="design_canvas.textarea"
+                rows={3}
+                style={{
+                  width: "100%",
+                  background: "#080000",
+                  border: "1px solid #3a0000",
+                  borderRadius: "2px",
+                  padding: "8px 10px",
+                  fontFamily: "Cinzel, serif",
+                  fontSize: "0.7rem",
+                  color: "#cc8888",
+                  letterSpacing: "0.03em",
+                  resize: "vertical",
+                  outline: "none",
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
       {/* Header bar */}
       <div
         className="flex items-center justify-between px-4 py-2"

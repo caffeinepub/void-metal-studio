@@ -14,17 +14,46 @@ export const UserRole = IDL.Variant({
   'guest' : IDL.Null,
 });
 export const Time = IDL.Int;
+export const AIMessage = IDL.Record({
+  'content' : IDL.Text,
+  'role' : IDL.Text,
+  'timestamp' : Time,
+});
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const ProjectStage = IDL.Variant({
+  'video' : IDL.Null,
+  'idea' : IDL.Null,
+  'script' : IDL.Null,
+  'published' : IDL.Null,
+  'visuals' : IDL.Null,
+});
+export const Project = IDL.Record({
+  'id' : IDL.Text,
+  'title' : IDL.Text,
+  'scriptContent' : IDL.Text,
+  'createdAt' : Time,
+  'designNotes' : IDL.Text,
+  'videoNotes' : IDL.Text,
+  'updatedAt' : Time,
+  'stage' : ProjectStage,
+  'aiHistory' : IDL.Vec(AIMessage),
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addAIMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [IDL.Bool], []),
   'adminBanUser' : IDL.Func([IDL.Principal], [], []),
   'adminIsBanned' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
   'adminUnbanUser' : IDL.Func([IDL.Principal], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'createProject' : IDL.Func([IDL.Text], [IDL.Text], []),
+  'deleteProject' : IDL.Func([IDL.Text], [IDL.Bool], []),
+  'getAIHistory' : IDL.Func([IDL.Text], [IDL.Vec(AIMessage)], ['query']),
   'getBanTimestamp' : IDL.Func([], [Time], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getProject' : IDL.Func([IDL.Text], [IDL.Opt(Project)], ['query']),
+  'getProjects' : IDL.Func([], [IDL.Vec(Project)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
@@ -33,6 +62,12 @@ export const idlService = IDL.Service({
   'isBanned' : IDL.Func([], [IDL.Bool], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'updateProject' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Bool],
+      [],
+    ),
+  'updateProjectStage' : IDL.Func([IDL.Text, ProjectStage], [IDL.Bool], []),
 });
 
 export const idlInitArgs = [];
@@ -44,17 +79,46 @@ export const idlFactory = ({ IDL }) => {
     'guest' : IDL.Null,
   });
   const Time = IDL.Int;
+  const AIMessage = IDL.Record({
+    'content' : IDL.Text,
+    'role' : IDL.Text,
+    'timestamp' : Time,
+  });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const ProjectStage = IDL.Variant({
+    'video' : IDL.Null,
+    'idea' : IDL.Null,
+    'script' : IDL.Null,
+    'published' : IDL.Null,
+    'visuals' : IDL.Null,
+  });
+  const Project = IDL.Record({
+    'id' : IDL.Text,
+    'title' : IDL.Text,
+    'scriptContent' : IDL.Text,
+    'createdAt' : Time,
+    'designNotes' : IDL.Text,
+    'videoNotes' : IDL.Text,
+    'updatedAt' : Time,
+    'stage' : ProjectStage,
+    'aiHistory' : IDL.Vec(AIMessage),
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addAIMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [IDL.Bool], []),
     'adminBanUser' : IDL.Func([IDL.Principal], [], []),
     'adminIsBanned' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
     'adminUnbanUser' : IDL.Func([IDL.Principal], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'createProject' : IDL.Func([IDL.Text], [IDL.Text], []),
+    'deleteProject' : IDL.Func([IDL.Text], [IDL.Bool], []),
+    'getAIHistory' : IDL.Func([IDL.Text], [IDL.Vec(AIMessage)], ['query']),
     'getBanTimestamp' : IDL.Func([], [Time], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getProject' : IDL.Func([IDL.Text], [IDL.Opt(Project)], ['query']),
+    'getProjects' : IDL.Func([], [IDL.Vec(Project)], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
@@ -63,6 +127,12 @@ export const idlFactory = ({ IDL }) => {
     'isBanned' : IDL.Func([], [IDL.Bool], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'updateProject' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Bool],
+        [],
+      ),
+    'updateProjectStage' : IDL.Func([IDL.Text, ProjectStage], [IDL.Bool], []),
   });
 };
 

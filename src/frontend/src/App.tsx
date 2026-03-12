@@ -1,5 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
 import React, { useState, useRef, useCallback, useEffect } from "react";
+import { ProjectStage } from "./backend";
+import { ProjectProvider, useProject } from "./context/ProjectContext";
+import { UnifiedExportModal } from "./context/UnifiedExportModal";
+import { useActor } from "./hooks/useActor";
 import { useExport } from "./hooks/useExport";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import {
@@ -8,6 +12,9 @@ import {
 } from "./hooks/useQueries";
 import { useRedHatGeneration } from "./hooks/useRedHatGeneration";
 
+import { Toaster } from "@/components/ui/sonner";
+import { ChevronDown, Loader2, Plus } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import AISidebar from "./components/AISidebar";
 import BanOverlay from "./components/BanOverlay";
 import BottomPanel from "./components/BottomPanel";
@@ -27,12 +34,372 @@ import VideoTimeline from "./components/VideoTimeline";
 
 type AppView = "studio" | "hub" | "canvas" | "video";
 
-export default function App() {
+const PIPELINE_STAGES = [
+  { key: "idea", label: "IDEA", icon: "\uD83D\uDCA1" },
+  { key: "script", label: "SCRIPT", icon: "\uD83D\uDCDC" },
+  { key: "visuals", label: "VISUALS", icon: "\uD83C\uDFA8" },
+  { key: "video", label: "VIDEO", icon: "\uD83C\uDFA6" },
+  { key: "published", label: "PUBLISHED", icon: "\u26A1" },
+];
+
+// ── Project Selector ──────────────────────────────────────────────────────────
+
+function ProjectSelector() {
+  const {
+    activeProject,
+    setActiveProject,
+    projects,
+    isLoadingProjects,
+    refetchProjects,
+  } = useProject();
+  const { actor } = useActor();
+  const [open, setOpen] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [creating, setCreating] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const handleCreate = async () => {
+    if (!newName.trim() || !actor) return;
+    setCreating(true);
+    try {
+      const id = await actor.createProject(newName.trim());
+      refetchProjects();
+      setNewName("");
+      // Select new project
+      const newProj = {
+        id,
+        title: newName.trim(),
+        stage: ProjectStage.idea,
+        scriptContent: "",
+        designNotes: "",
+        videoNotes: "",
+        aiHistory: [],
+        createdAt: BigInt(0),
+        updatedAt: BigInt(0),
+      };
+      setActiveProject(newProj);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  return (
+    <div ref={ref} style={{ position: "relative", zIndex: 20, flexShrink: 0 }}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        data-ocid="project_selector.open_modal_button"
+        className="forge-btn flex items-center gap-2 px-3 py-1.5"
+        style={{
+          minWidth: "140px",
+          maxWidth: "200px",
+          fontSize: "0.65rem",
+          letterSpacing: "0.06em",
+          color: activeProject ? "oklch(0.75 0.18 40)" : "oklch(0.45 0.04 30)",
+          borderColor: activeProject ? "oklch(0.4 0.12 38 / 0.7)" : undefined,
+        }}
+      >
+        <span className="truncate flex-1 text-left">
+          {activeProject ? activeProject.title : "SELECT PROJECT"}
+        </span>
+        <ChevronDown size={10} style={{ flexShrink: 0 }} />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.97 }}
+            transition={{ duration: 0.12 }}
+            data-ocid="project_selector.popover"
+            style={{
+              position: "absolute",
+              top: "calc(100% + 6px)",
+              left: 0,
+              minWidth: "220px",
+              background:
+                "linear-gradient(135deg, oklch(0.12 0.01 20) 0%, oklch(0.15 0.012 22) 100%)",
+              border: "1px solid oklch(0.35 0.1 25)",
+              borderRadius: "4px",
+              boxShadow:
+                "0 8px 32px oklch(0 0 0 / 0.7), 0 0 20px oklch(0.4 0.15 25 / 0.2)",
+              overflow: "hidden",
+            }}
+          >
+            {/* Projects list */}
+            <div style={{ maxHeight: "220px", overflowY: "auto" }}>
+              {isLoadingProjects && (
+                <div
+                  data-ocid="project_selector.loading_state"
+                  className="flex items-center justify-center py-4"
+                >
+                  <Loader2
+                    size={14}
+                    className="animate-spin"
+                    style={{ color: "oklch(0.55 0.22 25)" }}
+                  />
+                </div>
+              )}
+              {!isLoadingProjects && projects.length === 0 && (
+                <div
+                  data-ocid="project_selector.empty_state"
+                  style={{
+                    padding: "12px 14px",
+                    fontFamily: "Cinzel, serif",
+                    fontSize: "0.62rem",
+                    color: "oklch(0.4 0.04 30)",
+                    letterSpacing: "0.06em",
+                  }}
+                >
+                  NO PROJECTS YET
+                </div>
+              )}
+              {projects.map((p, i) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveProject(p);
+                    setOpen(false);
+                  }}
+                  data-ocid={`project_selector.item.${i + 1}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    padding: "8px 14px",
+                    fontFamily: "Cinzel, serif",
+                    fontSize: "0.7rem",
+                    letterSpacing: "0.04em",
+                    color:
+                      activeProject?.id === p.id
+                        ? "oklch(0.75 0.25 25)"
+                        : "oklch(0.75 0.03 30)",
+                    background:
+                      activeProject?.id === p.id
+                        ? "oklch(0.18 0.04 22)"
+                        : "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    transition: "background 0.1s",
+                    borderBottom: "1px solid oklch(0.18 0.03 22)",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (activeProject?.id !== p.id)
+                      (e.currentTarget as HTMLButtonElement).style.background =
+                        "oklch(0.14 0.01 20)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (activeProject?.id !== p.id)
+                      (e.currentTarget as HTMLButtonElement).style.background =
+                        "transparent";
+                  }}
+                >
+                  <span className="truncate">{p.title}</span>
+                  <span
+                    style={{
+                      fontSize: "0.55rem",
+                      color: "oklch(0.5 0.1 38)",
+                      background: "oklch(0.12 0.008 20)",
+                      border: "1px solid oklch(0.25 0.06 35 / 0.4)",
+                      borderRadius: "2px",
+                      padding: "1px 4px",
+                      letterSpacing: "0.06em",
+                      flexShrink: 0,
+                      marginLeft: "6px",
+                    }}
+                  >
+                    {p.stage.toUpperCase()}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* New project input */}
+            <div
+              style={{
+                borderTop: "1px solid oklch(0.22 0.04 25)",
+                padding: "8px",
+                display: "flex",
+                gap: "6px",
+                alignItems: "center",
+              }}
+            >
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+                placeholder="New project name..."
+                data-ocid="project_selector.input"
+                style={{
+                  flex: 1,
+                  background: "oklch(0.08 0.005 20)",
+                  border: "1px solid oklch(0.28 0.06 25)",
+                  borderRadius: "3px",
+                  padding: "5px 8px",
+                  fontFamily: "Cinzel, serif",
+                  fontSize: "0.65rem",
+                  color: "oklch(0.85 0.02 60)",
+                  outline: "none",
+                }}
+              />
+              <button
+                type="button"
+                onClick={handleCreate}
+                disabled={!newName.trim() || creating}
+                data-ocid="project_selector.submit_button"
+                className="forge-btn p-1.5"
+                style={{ color: "oklch(0.65 0.22 25)", flexShrink: 0 }}
+              >
+                {creating ? (
+                  <Loader2 size={12} className="animate-spin" />
+                ) : (
+                  <Plus size={12} />
+                )}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ── Pipeline Progress Bar ─────────────────────────────────────────────────────
+
+function PipelineBar({
+  onStageClick,
+}: { onStageClick?: (stage: string) => void }) {
+  const { activeProject } = useProject();
+  const { actor } = useActor();
+  const { refetchProjects, setActiveProject } = useProject();
+
+  if (!activeProject) return null;
+
+  const currentIdx = PIPELINE_STAGES.findIndex(
+    (s) => s.key === activeProject.stage,
+  );
+
+  const handleStageClick = async (stageKey: string, _idx: number) => {
+    if (!actor) return;
+    await actor
+      .updateProjectStage(activeProject.id, stageKey as ProjectStage)
+      .catch(() => {});
+    setActiveProject({ ...activeProject, stage: stageKey as ProjectStage });
+    refetchProjects();
+    onStageClick?.(stageKey);
+  };
+
+  return (
+    <div
+      className="relative z-10 flex items-center px-4 py-2 gap-0"
+      style={{
+        background: "oklch(0.08 0.006 20)",
+        borderBottom: "1px solid oklch(0.2 0.05 25)",
+      }}
+    >
+      {/* Project label */}
+      <span
+        style={{
+          fontFamily: "Cinzel, serif",
+          fontSize: "0.6rem",
+          letterSpacing: "0.1em",
+          color: "oklch(0.45 0.06 30)",
+          marginRight: "12px",
+          flexShrink: 0,
+          whiteSpace: "nowrap",
+        }}
+      >
+        PIPELINE:
+      </span>
+
+      {/* Steps */}
+      <div className="flex items-center flex-1 gap-0">
+        {PIPELINE_STAGES.map((stage, idx) => {
+          const isActive = idx === currentIdx;
+          const isDone = idx < currentIdx;
+          const color = isActive
+            ? "oklch(0.65 0.28 25)"
+            : isDone
+              ? "oklch(0.5 0.14 38)"
+              : "oklch(0.35 0.04 30)";
+
+          return (
+            <React.Fragment key={stage.key}>
+              <button
+                type="button"
+                onClick={() => handleStageClick(stage.key, idx)}
+                data-ocid={`pipeline.${stage.key}.button`}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  padding: "3px 8px",
+                  fontFamily: "Cinzel, serif",
+                  fontSize: "0.6rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  color,
+                  background: isActive ? "oklch(0.14 0.03 22)" : "transparent",
+                  border: `1px solid ${isActive ? "oklch(0.45 0.2 25 / 0.6)" : "transparent"}`,
+                  borderRadius: "3px",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                  whiteSpace: "nowrap",
+                  boxShadow: isActive
+                    ? "0 0 10px oklch(0.45 0.22 25 / 0.3)"
+                    : undefined,
+                  textShadow: isActive
+                    ? "0 0 8px oklch(0.55 0.25 25 / 0.6)"
+                    : undefined,
+                }}
+              >
+                <span>{stage.icon}</span>
+                <span className="hidden sm:inline">{stage.label}</span>
+              </button>
+              {idx < PIPELINE_STAGES.length - 1 && (
+                <div
+                  style={{
+                    flex: 1,
+                    height: "1px",
+                    background:
+                      idx < currentIdx
+                        ? "oklch(0.5 0.14 38 / 0.6)"
+                        : "oklch(0.22 0.04 25)",
+                    minWidth: "8px",
+                    maxWidth: "40px",
+                  }}
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── AppContent (inside ProjectProvider) ───────────────────────────────────────
+
+function AppContent() {
   const { identity, clear, isInitializing } = useInternetIdentity();
   const queryClient = useQueryClient();
   const isAuthenticated = !!identity;
+  const { activeProject } = useProject();
 
-  // Backend hooks
   const {
     data: userProfile,
     isLoading: profileLoading,
@@ -42,16 +409,11 @@ export default function App() {
   const { generate, isGenerating } = useRedHatGeneration();
   const { exportContent } = useExport();
 
-  // View state
   const [view, setView] = useState<AppView>("studio");
-
-  // Canvas state
   const [canvasFiles, setCanvasFiles] = useState<CanvasFile[]>([]);
   const [generatedResults, setGeneratedResults] = useState<GeneratedResult[]>(
     [],
   );
-
-  // UI state
   const [dragonPower, setDragonPower] = useState(75);
   const [statusText, setStatusText] = useState("AWAITING COMMAND");
   const [activeEffect, setActiveEffect] = useState<EffectName>(null);
@@ -61,29 +423,22 @@ export default function App() {
     "music" | "video" | "ignite" | null
   >(null);
   const [aiSidebarOpen, setAiSidebarOpen] = useState(false);
+  const [publishModalOpen, setPublishModalOpen] = useState(false);
 
-  // Hub content from AI Scribe
-  const [hubAIContent, setHubAIContent] = useState<string[]>([]);
-
-  // File input refs for toolbar buttons
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
-  // Show profile setup modal
   const showProfileSetup =
     isAuthenticated &&
     !profileLoading &&
     profileFetched &&
     userProfile === null;
 
-  // ─── Content Protection ─────────────────────────────────────────────────────
-
   const handleViolation = useCallback(() => {
     if (!isAuthenticated) return;
     queryClient.invalidateQueries({ queryKey: ["isBanned"] });
   }, [isAuthenticated, queryClient]);
 
-  // Global keyboard protection
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -91,16 +446,13 @@ export default function App() {
         ["s", "p"].includes(e.key.toLowerCase())
       ) {
         e.preventDefault();
-        if (canvasFiles.length > 0 || generatedResults.length > 0) {
+        if (canvasFiles.length > 0 || generatedResults.length > 0)
           handleViolation();
-        }
       }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [canvasFiles.length, generatedResults.length, handleViolation]);
-
-  // ─── File Upload Handlers ──────────────────────────────────────────────────────
 
   const handleFilesAdded = useCallback((newFiles: CanvasFile[]) => {
     setCanvasFiles((prev) => [...prev, ...newFiles]);
@@ -111,7 +463,6 @@ export default function App() {
     if (!isAuthenticated) return;
     photoInputRef.current?.click();
   };
-
   const handleUploadVideo = () => {
     if (!isAuthenticated) return;
     videoInputRef.current?.click();
@@ -131,16 +482,11 @@ export default function App() {
               : file.type === "text/plain" || file.name.endsWith(".txt")
                 ? "text"
                 : "other";
-
         let previewUrl: string | undefined;
         let textContent: string | undefined;
-
-        if (type === "image" || type === "video" || type === "audio") {
+        if (type === "image" || type === "video" || type === "audio")
           previewUrl = URL.createObjectURL(file);
-        } else if (type === "text") {
-          textContent = await file.text();
-        }
-
+        else if (type === "text") textContent = await file.text();
         return {
           id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
           file,
@@ -153,13 +499,10 @@ export default function App() {
     handleFilesAdded(processed);
   };
 
-  // ─── Generation Handlers ──────────────────────────────────────────────────────
-
   const handleMusicGen = () => {
     if (!isAuthenticated) return;
     setGenModalOpen("music");
   };
-
   const handleVideoGen = () => {
     if (!isAuthenticated) return;
     setGenModalOpen("video");
@@ -170,7 +513,6 @@ export default function App() {
     if (!type) return;
     setGenModalOpen(null);
     setStatusText("GENERATING...");
-
     const result = await generate({
       type: type === "ignite" ? "ignite" : type,
       seed,
@@ -181,38 +523,34 @@ export default function App() {
         size: f.file.size,
       })),
     });
-
     if (result) {
-      const genResult: GeneratedResult = {
-        id: `gen-${Date.now()}`,
-        type: type === "ignite" ? "ignite" : type,
-        url: result.url,
-        blob: result.blob,
-        message: result.message,
-        isDemo: result.isDemo,
-      };
-      setGeneratedResults((prev) => [...prev, genResult]);
+      setGeneratedResults((prev) => [
+        ...prev,
+        {
+          id: `gen-${Date.now()}`,
+          type: type === "ignite" ? "ignite" : type,
+          url: result.url,
+          blob: result.blob,
+          message: result.message,
+          isDemo: result.isDemo,
+        },
+      ]);
       setStatusText("COMPLETE");
     } else {
       setStatusText("ERROR");
     }
   };
 
-  // ─── IGNITE ───────────────────────────────────────────────────────────────────
-
   const handleIgnite = () => {
     if (!isAuthenticated) return;
     const textFile = canvasFiles.find((f) => f.type === "text");
-    if (textFile?.textContent) {
+    if (textFile?.textContent)
       handleIgniteWithSeed(textFile.textContent.slice(0, 500));
-    } else {
-      setGenModalOpen("ignite");
-    }
+    else setGenModalOpen("ignite");
   };
 
   const handleIgniteWithSeed = async (seed: string) => {
     setStatusText("IGNITING...");
-
     const result = await generate({
       type: "ignite",
       seed,
@@ -223,33 +561,30 @@ export default function App() {
         size: f.file.size,
       })),
     });
-
     if (result) {
-      const genResult: GeneratedResult = {
-        id: `ignite-${Date.now()}`,
-        type: "ignite",
-        url: result.url,
-        blob: result.blob,
-        message: result.message,
-        isDemo: result.isDemo,
-      };
-      setGeneratedResults((prev) => [...prev, genResult]);
+      setGeneratedResults((prev) => [
+        ...prev,
+        {
+          id: `ignite-${Date.now()}`,
+          type: "ignite",
+          url: result.url,
+          blob: result.blob,
+          message: result.message,
+          isDemo: result.isDemo,
+        },
+      ]);
       setStatusText("COMPLETE");
     } else {
       setStatusText("ERROR");
     }
   };
 
-  // ─── Export ───────────────────────────────────────────────────────────────────
-
   const handleExport = () => {
     const hasContent = canvasFiles.length > 0 || generatedResults.length > 0;
     if (!hasContent) return;
-
     const latestGen = generatedResults[generatedResults.length - 1];
     const firstFile = canvasFiles[0];
-
-    if (latestGen) {
+    if (latestGen)
       exportContent({
         blob: latestGen.blob,
         url: latestGen.url,
@@ -259,26 +594,14 @@ export default function App() {
             ? "audio/mpeg"
             : "video/mp4",
       });
-    } else if (firstFile) {
+    else if (firstFile)
       exportContent({
         blob: firstFile.file,
         fileName: firstFile.file.name,
         mimeType: firstFile.file.type,
       });
-    }
-
     setStatusText("EXPORT COMPLETE");
   };
-
-  // ─── AI Scribe ────────────────────────────────────────────────────────────────
-
-  const handleSendToHub = useCallback((content: string) => {
-    setHubAIContent((prev) => [...prev, content]);
-    setStatusText("CONTENT SENT TO HUB");
-    setTimeout(() => setStatusText("AWAITING COMMAND"), 2500);
-  }, []);
-
-  // ─── Logout ──────────────────────────────────────────────────────────────────
 
   const handleLogout = async () => {
     await clear();
@@ -289,8 +612,6 @@ export default function App() {
     setView("studio");
     setAiSidebarOpen(false);
   };
-
-  // ─── Render Guards ───────────────────────────────────────────────────────────
 
   if (isInitializing || (isAuthenticated && banLoading)) {
     return (
@@ -313,14 +634,8 @@ export default function App() {
     );
   }
 
-  if (!isAuthenticated) {
-    return <LoginPrompt />;
-  }
-
-  if (isAuthenticated && isBanned) {
-    return <BanOverlay />;
-  }
-
+  if (!isAuthenticated) return <LoginPrompt />;
+  if (isAuthenticated && isBanned) return <BanOverlay />;
   if (showProfileSetup) {
     return (
       <div
@@ -338,6 +653,15 @@ export default function App() {
 
   const hasContent = canvasFiles.length > 0 || generatedResults.length > 0;
   const principalShort = `${identity?.getPrincipal().toString().slice(0, 12)}...`;
+  const isReadyToPublish = activeProject && activeProject.stage === "video";
+
+  const navBtnStyle = (active: boolean) => ({
+    color: active ? "oklch(0.75 0.25 25)" : "oklch(0.5 0.06 30)",
+    borderColor: active ? "oklch(0.5 0.2 25)" : "oklch(0.25 0.04 25)",
+    boxShadow: active
+      ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
+      : undefined,
+  });
 
   return (
     <div
@@ -356,8 +680,6 @@ export default function App() {
           filter: "brightness(0.4) contrast(1.5) saturate(0.5)",
         }}
       />
-
-      {/* Vignette overlay */}
       <div
         className="fixed inset-0 pointer-events-none z-0"
         style={{
@@ -368,7 +690,7 @@ export default function App() {
 
       {/* ── HEADER ── */}
       <header
-        className="relative z-10 stone-panel px-4 py-3 flex items-center justify-between gap-3"
+        className="relative z-10 stone-panel px-4 py-3 flex items-center gap-3"
         style={{
           borderBottom: "1px solid oklch(0.3 0.08 25)",
           borderLeft: "none",
@@ -384,7 +706,7 @@ export default function App() {
             className="w-8 h-8 animate-crack-glow"
             style={{ filter: "drop-shadow(0 0 8px oklch(0.65 0.28 25))" }}
           />
-          <div>
+          <div className="hidden md:block">
             <h1 className="gothic-title text-lg leading-none">
               VOID METAL STUDIO
             </h1>
@@ -397,9 +719,12 @@ export default function App() {
           </div>
         </div>
 
-        {/* ── View Nav + AI Scribe Toggle ── */}
+        {/* Project selector */}
+        <ProjectSelector />
+
+        {/* Nav */}
         <nav
-          className="flex items-center gap-1 flex-wrap"
+          className="flex items-center gap-1 flex-wrap flex-1"
           aria-label="Main navigation"
         >
           <button
@@ -407,105 +732,72 @@ export default function App() {
             onClick={() => setView("studio")}
             data-ocid="nav.studio.tab"
             className="forge-btn px-3 py-1.5 text-xs tracking-widest"
-            style={{
-              color:
-                view === "studio"
-                  ? "oklch(0.75 0.25 25)"
-                  : "oklch(0.5 0.06 30)",
-              borderColor:
-                view === "studio" ? "oklch(0.5 0.2 25)" : "oklch(0.25 0.04 25)",
-              boxShadow:
-                view === "studio"
-                  ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
-                  : undefined,
-            }}
+            style={navBtnStyle(view === "studio")}
             aria-current={view === "studio" ? "page" : undefined}
           >
-            🔥 STUDIO
+            \uD83D\uDD25 STUDIO
           </button>
           <button
             type="button"
             onClick={() => setView("hub")}
             data-ocid="nav.hub.tab"
             className="forge-btn px-3 py-1.5 text-xs tracking-widest"
-            style={{
-              color:
-                view === "hub" ? "oklch(0.75 0.25 25)" : "oklch(0.5 0.06 30)",
-              borderColor:
-                view === "hub" ? "oklch(0.5 0.2 25)" : "oklch(0.25 0.04 25)",
-              boxShadow:
-                view === "hub"
-                  ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
-                  : undefined,
-            }}
+            style={navBtnStyle(view === "hub")}
             aria-current={view === "hub" ? "page" : undefined}
           >
-            ⚔ FORGE HUB
+            \u2694 FORGE HUB
           </button>
-
           <button
             type="button"
             onClick={() => setView("canvas")}
             data-ocid="design_canvas.tab"
             className="forge-btn px-3 py-1.5 text-xs tracking-widest"
-            style={{
-              color:
-                view === "canvas"
-                  ? "oklch(0.75 0.25 25)"
-                  : "oklch(0.5 0.06 30)",
-              borderColor:
-                view === "canvas" ? "oklch(0.5 0.2 25)" : "oklch(0.25 0.04 25)",
-              boxShadow:
-                view === "canvas"
-                  ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
-                  : undefined,
-            }}
+            style={navBtnStyle(view === "canvas")}
             aria-current={view === "canvas" ? "page" : undefined}
           >
-            🎨 DESIGN
+            \uD83C\uDFA8 DESIGN
           </button>
-
           <button
             type="button"
             onClick={() => setView("video")}
             data-ocid="nav.video.tab"
             className="forge-btn px-3 py-1.5 text-xs tracking-widest"
-            style={{
-              color:
-                view === "video" ? "oklch(0.75 0.25 25)" : "oklch(0.5 0.06 30)",
-              borderColor:
-                view === "video" ? "oklch(0.5 0.2 25)" : "oklch(0.25 0.04 25)",
-              boxShadow:
-                view === "video"
-                  ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
-                  : undefined,
-            }}
+            style={navBtnStyle(view === "video")}
             aria-current={view === "video" ? "page" : undefined}
           >
-            🎬 VIDEO
+            \uD83C\uDFA6 VIDEO
           </button>
-
-          {/* AI Scribe Toggle */}
           <button
             type="button"
             onClick={() => setAiSidebarOpen((v) => !v)}
             data-ocid="nav.ai_sidebar.toggle"
             className="forge-btn px-3 py-1.5 text-xs tracking-widest"
-            style={{
-              color: aiSidebarOpen
-                ? "oklch(0.75 0.25 25)"
-                : "oklch(0.5 0.06 30)",
-              borderColor: aiSidebarOpen
-                ? "oklch(0.5 0.2 25)"
-                : "oklch(0.25 0.04 25)",
-              boxShadow: aiSidebarOpen
-                ? "0 0 12px oklch(0.45 0.22 25 / 0.3), inset 0 1px 0 oklch(0.55 0.2 35 / 0.3)"
-                : undefined,
-            }}
+            style={navBtnStyle(aiSidebarOpen)}
             aria-pressed={aiSidebarOpen}
           >
-            🐉 AI SCRIBE
+            \uD83D\uDC09 AI SCRIBE
           </button>
+
+          {/* Publish button */}
+          {activeProject && (
+            <button
+              type="button"
+              onClick={() => setPublishModalOpen(true)}
+              data-ocid="publish.open_modal_button"
+              className="forge-btn px-3 py-1.5 text-xs tracking-widest"
+              style={{
+                color: "oklch(0.8 0.02 60)",
+                borderColor: "oklch(0.5 0.22 25 / 0.7)",
+                background:
+                  "linear-gradient(180deg, oklch(0.25 0.1 25) 0%, oklch(0.16 0.07 22) 100%)",
+                animation: isReadyToPublish
+                  ? "ignite-pulse 2s ease-in-out infinite"
+                  : undefined,
+              }}
+            >
+              \u26A1 PUBLISH
+            </button>
+          )}
         </nav>
 
         {/* User info + logout */}
@@ -538,28 +830,35 @@ export default function App() {
         </div>
       </header>
 
+      {/* ── PIPELINE BAR ── */}
+      <PipelineBar
+        onStageClick={(stage) => {
+          if (stage === "idea" || stage === "script") setView("studio");
+          else if (stage === "visuals") setView("canvas");
+          else if (stage === "video") setView("video");
+        }}
+      />
+
       {/* ── MAIN ── */}
       <main className="relative z-10 flex-1 flex flex-col">
         {view === "canvas" ? (
-          <DesignCanvas />
+          <DesignCanvas activeProject={activeProject} />
         ) : view === "video" ? (
-          <VideoTimeline />
+          <VideoTimeline activeProject={activeProject} />
         ) : view === "hub" ? (
           <div className="flex flex-1">
             <div className="flex-1">
-              <ProjectHub hubAIContent={hubAIContent} />
+              <ProjectHub onNavigate={(v) => setView(v)} />
             </div>
             <AISidebar
               isOpen={aiSidebarOpen}
               onClose={() => setAiSidebarOpen(false)}
-              onSendToHub={handleSendToHub}
+              activeProject={activeProject}
             />
           </div>
         ) : (
           <div className="flex flex-1 gap-0">
-            {/* Studio content */}
             <div className="flex-1 flex flex-col gap-3 p-3 md:p-4 min-w-0">
-              {/* Toolbar */}
               <Toolbar
                 onUploadPhoto={handleUploadPhoto}
                 onUploadVideo={handleUploadVideo}
@@ -569,8 +868,6 @@ export default function App() {
                 canExport={hasContent}
                 isAuthenticated={isAuthenticated}
               />
-
-              {/* Effects button row */}
               <div className="relative flex justify-center">
                 <button
                   type="button"
@@ -603,8 +900,6 @@ export default function App() {
                     </span>
                   )}
                 </button>
-
-                {/* Effects menu */}
                 <EffectsMenu
                   isOpen={effectsMenuOpen}
                   activeEffect={activeEffect}
@@ -612,8 +907,6 @@ export default function App() {
                   onClose={() => setEffectsMenuOpen(false)}
                 />
               </div>
-
-              {/* Canvas */}
               <Canvas
                 activeEffect={activeEffect}
                 onViolation={handleViolation}
@@ -622,8 +915,6 @@ export default function App() {
                 onFilesAdded={handleFilesAdded}
                 isAuthenticated={isAuthenticated}
               />
-
-              {/* Bottom panel */}
               <BottomPanel
                 dragonPower={dragonPower}
                 onDragonPowerChange={setDragonPower}
@@ -633,12 +924,10 @@ export default function App() {
                 isAuthenticated={isAuthenticated}
               />
             </div>
-
-            {/* AI Sidebar */}
             <AISidebar
               isOpen={aiSidebarOpen}
               onClose={() => setAiSidebarOpen(false)}
-              onSendToHub={handleSendToHub}
+              activeProject={activeProject}
             />
           </div>
         )}
@@ -655,7 +944,6 @@ export default function App() {
         }}
       >
         <div className="flex items-center gap-3">
-          {/* Emoji picker button */}
           <div className="relative">
             <button
               type="button"
@@ -680,7 +968,6 @@ export default function App() {
               onClose={() => setEmojiPickerOpen(false)}
             />
           </div>
-
           <span
             className="font-cinzel text-xs"
             style={{ color: "oklch(0.35 0.04 25)", letterSpacing: "0.08em" }}
@@ -688,7 +975,6 @@ export default function App() {
             © {new Date().getFullYear()} VOID METAL STUDIO · FOREVERRAW
           </span>
         </div>
-
         <a
           href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname || "void-metal-studio")}`}
           target="_blank"
@@ -698,7 +984,7 @@ export default function App() {
         >
           <img
             src="/assets/generated/emoji-raw-heart.dim_128x128.png"
-            alt="♥"
+            alt="\u2665"
             className="w-4 h-4"
             style={{ filter: "drop-shadow(0 0 3px oklch(0.55 0.25 25 / 0.5))" }}
           />
@@ -706,7 +992,7 @@ export default function App() {
         </a>
       </footer>
 
-      {/* ── MODALS ── */}
+      {/* Modals */}
       {genModalOpen && (
         <GenerationModal
           type={genModalOpen}
@@ -716,8 +1002,26 @@ export default function App() {
           isGenerating={isGenerating}
         />
       )}
+      {activeProject && publishModalOpen && (
+        <UnifiedExportModal
+          isOpen={publishModalOpen}
+          onClose={() => setPublishModalOpen(false)}
+          project={activeProject}
+        />
+      )}
 
-      {/* Hidden file inputs */}
+      <Toaster
+        theme="dark"
+        toastOptions={{
+          style: {
+            background: "oklch(0.12 0.01 20)",
+            border: "1px solid oklch(0.35 0.12 25)",
+            color: "oklch(0.85 0.02 60)",
+            fontFamily: "Cinzel, serif",
+          },
+        }}
+      />
+
       <input
         ref={photoInputRef}
         type="file"
@@ -741,5 +1045,23 @@ export default function App() {
         }}
       />
     </div>
+  );
+}
+
+// ── App (with ProjectProvider) ─────────────────────────────────────────────────
+
+export default function App() {
+  const { isInitializing } = useInternetIdentity();
+  const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
+
+  if (!isAuthenticated || isInitializing) {
+    return <AppContent />;
+  }
+
+  return (
+    <ProjectProvider>
+      <AppContent />
+    </ProjectProvider>
   );
 }
