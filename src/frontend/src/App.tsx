@@ -1051,14 +1051,6 @@ function AppContent() {
 // ── App (with ProjectProvider) ─────────────────────────────────────────────────
 
 export default function App() {
-  const { isInitializing } = useInternetIdentity();
-  const { identity } = useInternetIdentity();
-  const isAuthenticated = !!identity;
-
-  if (!isAuthenticated || isInitializing) {
-    return <AppContent />;
-  }
-
   return (
     <ProjectProvider>
       <AppContent />
